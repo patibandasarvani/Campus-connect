@@ -1,6 +1,0 @@
-{
-  "database": "connected",
-  "message": "API is running",
-  "status": "healthy",
-  "success": true
-}

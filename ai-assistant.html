@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Campus Connect</title>
+    <link rel="stylesheet" href="frontend/styles.css">
+    <style>
+        .ai-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .ai-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .ai-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chat-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message.ai {
+            background: #e9ecef;
+            color: #333;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .ai-features {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card {
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .ai-stats {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 0.5rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .typing-indicator.active {
+            display: block;
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .suggestion {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .suggestion:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        @media (max-width: 768px) {
+            .ai-main {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-section {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ai-container">
+        <!-- User Info -->
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div>
+                <div id="userName">Admin User</div>
+                <div id="userRole">Administrator</div>
+            </div>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- Header -->
+        <div class="ai-header">
+            <h1>🤖 AI Assistant</h1>
+            <p>Intelligent campus management with AI-powered insights and automation</p>
+        </div>
+
+        <!-- AI Statistics -->
+        <div class="ai-stats">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="aiQueries">0</div>
+                    <div class="stat-label">AI Queries Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="studentsAnalyzed">0</div>
+                    <div class="stat-label">Students Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="predictionsMade">0</div>
+                    <div class="stat-label">Predictions Made</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="timeSaved">0h</div>
+                    <div class="stat-label">Time Saved</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main AI Interface -->
+        <div class="ai-main">
+            <!-- Chat Section -->
+            <div class="chat-section">
+                <h3>💬 AI Chat Assistant</h3>
+                <div class="suggestions">
+                    <div class="suggestion" onclick="sendSuggestion('Analyze student performance')">Analyze student performance</div>
+                    <div class="suggestion" onclick="sendSuggestion('Generate attendance report')">Generate attendance report</div>
+                    <div class="suggestion" onclick="sendSuggestion('Predict student success')">Predict student success</div>
+                    <div class="suggestion" onclick="sendSuggestion('Identify at-risk students')">Identify at-risk students</div>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai">
+                        👋 Hello! I'm your AI assistant for Campus Connect. I can help you analyze student data, generate reports, predict outcomes, and provide insights. How can I assist you today?
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typingIndicator">AI is thinking...</div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Ask me anything about your campus data..." onkeypress="handleKeyPress(event)">
+                    <button class="btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+
+            <!-- AI Features -->
+            <div class="ai-features">
+                <h3>🚀 AI Features</h3>
+                
+                <div class="feature-card" onclick="analyzePerformance()">
+                    <div class="feature-title">📊 Performance Analysis</div>
+                    <div class="feature-desc">AI-powered analysis of student performance trends and patterns</div>
+                </div>
+                
+                <div class="feature-card" onclick="predictSuccess()">
+                    <div class="feature-title">🔮 Success Prediction</div>
+                    <div class="feature-desc">Machine learning models to predict student success rates</div>
+                </div>
+                
+                <div class="feature-card" onclick="identifyAtRisk()">
+                    <div class="feature-title">⚠️ At-Risk Detection</div>
+                    <div class="feature-desc">Identify students who may need additional support</div>
+                </div>
+                
+                <div class="feature-card" onclick="generateInsights()">
+                    <div class="feature-title">💡 Smart Insights</div>
+                    <div class="feature-desc">AI-generated insights and recommendations</div>
+                </div>
+                
+                <div class="feature-card" onclick="automatedReports()">
+                    <div class="feature-title">📋 Automated Reports</div>
+                    <div class="feature-desc">Generate comprehensive reports with AI analysis</div>
+                </div>
+                
+                <div class="feature-card" onclick="optimizeSchedule()">
+                    <div class="feature-title">⏰ Schedule Optimization</div>
+                    <div class="feature-desc">AI-optimized class scheduling and resource allocation</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="frontend/api.js"></script>
+    <script>
+        // Initialize data
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        let aiStats = {
+            queries: 0,
+            studentsAnalyzed: 0,
+            predictions: 0,
+            timeSaved: 0
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            updateUserInfo();
+            loadAIStats();
+        });
+
+        function checkAuth() {
+            if (!currentUser.username) {
+                window.location.href = 'simple-login.html';
+            }
+        }
+
+        function updateUserInfo() {
+            document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+            document.getElementById('userRole').textContent = currentUser.role ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : 'Administrator';
+            
+            // Update avatar
+            const avatar = document.getElementById('userAvatar');
+            avatar.textContent = (currentUser.name || currentUser.username).charAt(0).toUpperCase();
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'simple-login.html';
+        }
+
+        function loadAIStats() {
+            const saved = localStorage.getItem('aiStats');
+            if (saved) {
+                aiStats = JSON.parse(saved);
+            }
+            updateStatsDisplay();
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('aiQueries').textContent = aiStats.queries;
+            document.getElementById('studentsAnalyzed').textContent = aiStats.studentsAnalyzed;
+            document.getElementById('predictionsMade').textContent = aiStats.predictions;
+            document.getElementById('timeSaved').textContent = aiStats.timeSaved + 'h';
+        }
+
+        function saveAIStats() {
+            localStorage.setItem('aiStats', JSON.stringify(aiStats));
+        }
+
+        // Chat functionality
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendSuggestion(text) {
+            document.getElementById('chatInput').value = text;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Clear input
+            input.value = '';
+            
+            // Update stats
+            aiStats.queries++;
+            saveAIStats();
+            updateStatsDisplay();
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate AI response
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = generateAIResponse(message);
+                addMessage(response, 'ai');
+            }, 1500);
+        }
+
+        function addMessage(message, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = message;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('active');
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('active');
+        }
+
+        function generateAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Student performance analysis
+            if (lowerMessage.includes('performance') || lowerMessage.includes('analyze')) {
+                return analyzePerformanceResponse();
+            }
+            
+            // Attendance reports
+            if (lowerMessage.includes('attendance') || lowerMessage.includes('report')) {
+                return attendanceReportResponse();
+            }
+            
+            // Success prediction
+            if (lowerMessage.includes('predict') || lowerMessage.includes('success')) {
+                return successPredictionResponse();
+            }
+            
+            // At-risk students
+            if (lowerMessage.includes('risk') || lowerMessage.includes('at-risk')) {
+                return atRiskStudentsResponse();
+            }
+            
+            // Default response
+            return generateInsightfulResponse(message);
+        }
+
+        function analyzePerformanceResponse() {
+            const students = JSON.parse(localStorage.getItem('students') || '[]');
+            const avgMarks = students.length > 0 ? 
+                Math.round(students.reduce((sum, s) => sum + (s.marks || 0), 0) / students.length) : 0;
+            
+            aiStats.studentsAnalyzed = students.length;
+            saveAIStats();
+            updateStatsDisplay();
+            
+            return `📊 Performance Analysis Complete:\n\n• Total Students: ${students.length}\n• Average Marks: ${avgMarks}%\n• Top Performers: ${students.filter(s => (s.marks || 0) >= 90).length}\n• Need Improvement: ${students.filter(s => (s.marks || 0) < 60).length}\n\nRecommendation: Focus on students with marks below 60% for additional support.`;
+        }
+
+        function attendanceReportResponse() {
+            const students = JSON.parse(localStorage.getItem('students') || '[]');
+            const avgAttendance = students.length > 0 ? 
+                Math.round(students.reduce((sum, s) => sum + (s.attendance || 0), 0) / students.length) : 0;
+            
+            return `📋 Attendance Report:\n\n• Average Attendance: ${avgAttendance}%\n• Excellent Attendance (>90%): ${students.filter(s => (s.attendance || 0) >= 90).length}\n• Poor Attendance (<70%): ${students.filter(s => (s.attendance || 0) < 70).length}\n\nAction Required: Follow up with students having poor attendance.`;
+        }
+
+        function successPredictionResponse() {
+            const students = JSON.parse(localStorage.getItem('students') || '[]');
+            const highPerformers = students.filter(s => (s.marks || 0) >= 75 && (s.attendance || 0) >= 80);
+            
+            aiStats.predictions = students.length;
+            saveAIStats();
+            updateStatsDisplay();
+            
+            return `🔮 Success Prediction:\n\n• High Success Probability: ${highPerformers.length} students\n• Moderate Success: ${students.filter(s => (s.marks || 0) >= 60 && (s.marks || 0) < 75).length} students\n• Need Intervention: ${students.filter(s => (s.marks || 0) < 60).length} students\n\nKey Factors: Attendance and marks are strong predictors of success.`;
+        }
+
+        function atRiskStudentsResponse() {
+            const students = JSON.parse(localStorage.getItem('students') || '[]');
+            const atRisk = students.filter(s => (s.marks || 0) < 60 || (s.attendance || 0) < 70);
+            
+            return `⚠️ At-Risk Students: ${atRisk.length}\n\nRisk Factors:\n• Low Marks (<60%): ${students.filter(s => (s.marks || 0) < 60).length}\n• Poor Attendance (<70%): ${students.filter(s => (s.attendance || 0) < 70).length}\n\nRecommendations:\n1. Schedule counseling sessions\n2. Provide additional academic support\n3. Monitor attendance closely\n4. Engage parents/guardians`;
+        }
+
+        function generateInsightfulResponse(message) {
+            const insights = [
+                "Based on current data patterns, I recommend focusing on improving attendance rates as it strongly correlates with academic performance.",
+                "The data suggests that early intervention programs could improve overall student success rates by approximately 23%.",
+                "Analysis indicates that students with consistent attendance (>85%) perform significantly better academically.",
+                "I recommend implementing a peer mentoring program for students who need additional support.",
+                "Current trends show that department-wise performance varies, suggesting the need for department-specific strategies."
+            ];
+            
+            return `💡 ${insights[Math.floor(Math.random() * insights.length)]}`;
+        }
+
+        // AI Feature Functions
+        function analyzePerformance() {
+            addMessage("Analyzing student performance patterns...", 'user');
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = analyzePerformanceResponse();
+                addMessage(response, 'ai');
+                
+                aiStats.timeSaved += 2;
+                saveAIStats();
+                updateStatsDisplay();
+            }, 2000);
+        }
+
+        function predictSuccess() {
+            addMessage("Predicting student success rates...", 'user');
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = successPredictionResponse();
+                addMessage(response, 'ai');
+                
+                aiStats.timeSaved += 1;
+                saveAIStats();
+                updateStatsDisplay();
+            }, 2000);
+        }
+
+        function identifyAtRisk() {
+            addMessage("Identifying at-risk students...", 'user');
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = atRiskStudentsResponse();
+                addMessage(response, 'ai');
+                
+                aiStats.timeSaved += 1;
+                saveAIStats();
+                updateStatsDisplay();
+            }, 2000);
+        }
+
+        function generateInsights() {
+            addMessage("Generating AI insights...", 'user');
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const insights = generateInsightfulResponse("");
+                addMessage(insights, 'ai');
+                
+                aiStats.timeSaved += 0.5;
+                saveAIStats();
+                updateStatsDisplay();
+            }, 1500);
+        }
+
+        function automatedReports() {
+            addMessage("Generating comprehensive reports...", 'user');
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const report = `📊 Comprehensive Campus Report:\n\n${analyzePerformanceResponse()}\n\n${attendanceReportResponse()}\n\n${successPredictionResponse()}\n\n${atRiskStudentsResponse()}`;
+                addMessage(report, 'ai');
+                
+                aiStats.timeSaved += 3;
+                saveAIStats();
+                updateStatsDisplay();
+            }, 3000);
+        }
+
+        function optimizeSchedule() {
+            addMessage("Optimizing class schedules...", 'user');
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                addMessage("⏰ Schedule Optimization Complete:\n\n• Recommended class times: 9AM-12PM for optimal student performance\n• Suggested break intervals: Every 90 minutes\n• Resource allocation: Balance lab and classroom usage\n• Peak hours: 10AM-11AM for high-attention subjects\n\nThis optimization could improve overall student engagement by 18%.", 'ai');
+                
+                aiStats.timeSaved += 2;
+                saveAIStats();
+                updateStatsDisplay();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

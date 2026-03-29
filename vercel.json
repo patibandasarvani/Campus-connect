@@ -26,6 +26,10 @@
       "dest": "/courses.html"
     },
     {
+      "src": "/ai-assistant",
+      "dest": "/ai-assistant.html"
+    },
+    {
       "src": "/data-recovery",
       "dest": "/data-recovery.html"
     },
@@ -44,6 +48,10 @@
     {
       "src": "/courses.html",
       "dest": "/courses.html"
+    },
+    {
+      "src": "/ai-assistant.html",
+      "dest": "/ai-assistant.html"
     },
     {
       "src": "/data-recovery.html",

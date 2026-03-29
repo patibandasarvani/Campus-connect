@@ -362,6 +362,9 @@
                 <li class="nav-item">
                     <a href="courses.html" class="nav-link">Courses</a>
                 </li>
+                <li class="nav-item">
+                    <a href="ai-assistant.html" class="nav-link">🤖 AI Assistant</a>
+                </li>
             </ul>
         </nav>
 
@@ -430,6 +433,36 @@
             </div>
         </div>
 
+        <!-- AI Insights -->
+        <section class="quick-actions">
+            <div class="section-header">
+                <h2 class="section-title">🤖 AI Insights</h2>
+                <button class="btn btn-secondary" onclick="generateAIInsights()">🔄 Refresh Insights</button>
+            </div>
+            <div class="actions-grid">
+                <div class="action-btn" onclick="showAIInsight('performance')">
+                    <span class="action-icon">📊</span>
+                    <div class="action-title">Performance Trends</div>
+                    <div class="action-desc" id="performanceInsight">Analyzing...</div>
+                </div>
+                <div class="action-btn" onclick="showAIInsight('attendance')">
+                    <span class="action-icon">📈</span>
+                    <div class="action-title">Attendance Patterns</div>
+                    <div class="action-desc" id="attendanceInsight">Analyzing...</div>
+                </div>
+                <div class="action-btn" onclick="showAIInsight('risk')">
+                    <span class="action-icon">⚠️</span>
+                    <div class="action-title">Risk Analysis</div>
+                    <div class="action-desc" id="riskInsight">Analyzing...</div>
+                </div>
+                <div class="action-btn" onclick="showAIInsight('recommendation')">
+                    <span class="action-icon">💡</span>
+                    <div class="action-title">AI Recommendations</div>
+                    <div class="action-desc" id="recommendationInsight">Analyzing...</div>
+                </div>
+            </div>
+        </section>
+
         <!-- Quick Actions -->
         <section class="quick-actions">
             <div class="section-header">
@@ -452,8 +485,13 @@
                     <div class="action-title">Manage Courses</div>
                     <div class="action-desc">Create and manage courses</div>
                 </a>
+                <a href="ai-assistant.html" class="action-btn">
+                    <span class="action-icon">🤖</span>
+                    <div class="action-title">AI Assistant</div>
+                    <div class="action-desc">Get AI-powered insights</div>
+                </a>
                 <button class="action-btn" onclick="showReports()">
-                    <span class="action-icon">�</span>
+                    <span class="action-icon">📈</span>
                     <div class="action-title">View Reports</div>
                     <div class="action-desc">Generate analytics</div>
                 </button>
@@ -1464,6 +1502,114 @@
                 alertContainer.style.display = 'none';
             }, 3000);
         }
+
+        // AI Insights Functions
+        function generateAIInsights() {
+            console.log('Generating AI insights...');
+            showAIInsight('performance');
+            showAIInsight('attendance');
+            showAIInsight('risk');
+            showAIInsight('recommendation');
+        }
+
+        function showAIInsight(type) {
+            const students = collegeData.students;
+            let insight = '';
+            
+            switch(type) {
+                case 'performance':
+                    insight = generatePerformanceInsight(students);
+                    document.getElementById('performanceInsight').textContent = insight;
+                    break;
+                case 'attendance':
+                    insight = generateAttendanceInsight(students);
+                    document.getElementById('attendanceInsight').textContent = insight;
+                    break;
+                case 'risk':
+                    insight = generateRiskInsight(students);
+                    document.getElementById('riskInsight').textContent = insight;
+                    break;
+                case 'recommendation':
+                    insight = generateRecommendationInsight(students);
+                    document.getElementById('recommendationInsight').textContent = insight;
+                    break;
+            }
+        }
+
+        function generatePerformanceInsight(students) {
+            if (students.length === 0) return 'No data available';
+            
+            const avgMarks = Math.round(students.reduce((sum, s) => sum + (s.marks || 0), 0) / students.length);
+            const topPerformers = students.filter(s => (s.marks || 0) >= 90).length;
+            const needImprovement = students.filter(s => (s.marks || 0) < 60).length;
+            
+            if (avgMarks >= 85) {
+                return `Excellent performance! Avg: ${avgMarks}%`;
+            } else if (avgMarks >= 75) {
+                return `Good performance. Avg: ${avgMarks}%`;
+            } else if (avgMarks >= 65) {
+                return `Average performance. Avg: ${avgMarks}%`;
+            } else {
+                return `Needs attention. Avg: ${avgMarks}%`;
+            }
+        }
+
+        function generateAttendanceInsight(students) {
+            if (students.length === 0) return 'No data available';
+            
+            const avgAttendance = Math.round(students.reduce((sum, s) => sum + (s.attendance || 0), 0) / students.length);
+            const excellentAttendance = students.filter(s => (s.attendance || 0) >= 90).length;
+            const poorAttendance = students.filter(s => (s.attendance || 0) < 70).length;
+            
+            if (avgAttendance >= 90) {
+                return `Excellent attendance! Avg: ${avgAttendance}%`;
+            } else if (avgAttendance >= 80) {
+                return `Good attendance. Avg: ${avgAttendance}%`;
+            } else if (avgAttendance >= 70) {
+                return `Average attendance. Avg: ${avgAttendance}%`;
+            } else {
+                return `Poor attendance. Avg: ${avgAttendance}%`;
+            }
+        }
+
+        function generateRiskInsight(students) {
+            if (students.length === 0) return 'No data available';
+            
+            const atRisk = students.filter(s => (s.marks || 0) < 60 || (s.attendance || 0) < 70).length;
+            const riskPercentage = Math.round((atRisk / students.length) * 100);
+            
+            if (riskPercentage <= 10) {
+                return `Low risk: ${atRisk} students need support`;
+            } else if (riskPercentage <= 25) {
+                return `Moderate risk: ${atRisk} students need support`;
+            } else if (riskPercentage <= 40) {
+                return `High risk: ${atRisk} students need support`;
+            } else {
+                return `Critical: ${atRisk} students need immediate support`;
+            }
+        }
+
+        function generateRecommendationInsight(students) {
+            if (students.length === 0) return 'No data available';
+            
+            const avgMarks = Math.round(students.reduce((sum, s) => sum + (s.marks || 0), 0) / students.length);
+            const avgAttendance = Math.round(students.reduce((sum, s) => sum + (s.attendance || 0), 0) / students.length);
+            
+            if (avgMarks >= 80 && avgAttendance >= 85) {
+                return 'Maintain current performance levels';
+            } else if (avgMarks < 70) {
+                return 'Focus on academic support programs';
+            } else if (avgAttendance < 80) {
+                return 'Implement attendance improvement initiatives';
+            } else {
+                return 'Monitor performance trends closely';
+            }
+        }
+
+        // Initialize AI insights on page load
+        setTimeout(() => {
+            generateAIInsights();
+        }, 2000);
     </script>
 </body>
 </html>

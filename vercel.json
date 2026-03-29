@@ -18,6 +18,10 @@
       "dest": "/frontend/students-enhanced.html"
     },
     {
+      "src": "/grades",
+      "dest": "/grades.html"
+    },
+    {
       "src": "/courses",
       "dest": "/courses.html"
     },
@@ -32,6 +36,10 @@
     {
       "src": "/dashboard-fixed.html",
       "dest": "/dashboard-fixed.html"
+    },
+    {
+      "src": "/grades.html",
+      "dest": "/grades.html"
     },
     {
       "src": "/courses.html",

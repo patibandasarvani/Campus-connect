@@ -501,7 +501,10 @@
         function initializeDashboard() {
             console.log('Initializing dashboard...');
             
-            // First load data from localStorage to ensure we have something
+            // First ensure we have data by generating demo data if needed
+            ensureDemoData();
+            
+            // Then load data from localStorage
             loadFromLocalStorage();
             
             // Then try to load from API
@@ -515,6 +518,33 @@
                 loadCollegeData();
                 loadDashboardData();
             }, 30000); // Refresh every 30 seconds
+        }
+
+        // Ensure demo data exists
+        function ensureDemoData() {
+            try {
+                // Check if we already have students in localStorage
+                const existingStudents = JSON.parse(localStorage.getItem('students') || '[]');
+                
+                if (existingStudents.length === 0) {
+                    console.log('No students found, generating demo data...');
+                    
+                    // Generate demo students
+                    const demoStudents = generateDemoStudents();
+                    
+                    // Save to localStorage
+                    localStorage.setItem('students', JSON.stringify(demoStudents));
+                    localStorage.setItem('faculty', JSON.stringify(generateDemoFaculty()));
+                    localStorage.setItem('courses', JSON.stringify(generateDemoCourses()));
+                    localStorage.setItem('departments', JSON.stringify(generateDemoDepartments()));
+                    
+                    console.log('Demo data generated and saved to localStorage');
+                } else {
+                    console.log('Found existing students in localStorage:', existingStudents.length);
+                }
+            } catch (error) {
+                console.error('Error ensuring demo data:', error);
+            }
         }
 
         // Load data from localStorage as fallback
@@ -652,6 +682,54 @@
             
             console.log(`Generated ${demoStudents.length} demo students with 20 per department`);
             return demoStudents;
+        }
+
+        // Generate demo faculty
+        function generateDemoFaculty() {
+            return [
+                { id: 1, name: 'Dr. Sarah Johnson', department: 'Computer Science', email: 'sarah@college.edu' },
+                { id: 2, name: 'Prof. Michael Smith', department: 'Mathematics', email: 'michael@college.edu' },
+                { id: 3, name: 'Dr. Emily Davis', department: 'Physics', email: 'emily@college.edu' },
+                { id: 4, name: 'Prof. James Wilson', department: 'Chemistry', email: 'james@college.edu' },
+                { id: 5, name: 'Dr. Lisa Anderson', department: 'Biology', email: 'lisa@college.edu' },
+                { id: 6, name: 'Prof. Robert Taylor', department: 'Electrical Engineering', email: 'robert@college.edu' },
+                { id: 7, name: 'Dr. Maria Garcia', department: 'Mechanical Engineering', email: 'maria@college.edu' },
+                { id: 8, name: 'Prof. David Martinez', department: 'Civil Engineering', email: 'david@college.edu' },
+                { id: 9, name: 'Dr. Jennifer Brown', department: 'Business Administration', email: 'jennifer@college.edu' },
+                { id: 10, name: 'Prof. William Jones', department: 'Economics', email: 'william@college.edu' }
+            ];
+        }
+
+        // Generate demo courses
+        function generateDemoCourses() {
+            return [
+                { id: 1, name: 'Introduction to Programming', code: 'CS101', department: 'Computer Science', credits: 3 },
+                { id: 2, name: 'Data Structures', code: 'CS201', department: 'Computer Science', credits: 4 },
+                { id: 3, name: 'Calculus I', code: 'MATH101', department: 'Mathematics', credits: 4 },
+                { id: 4, name: 'Linear Algebra', code: 'MATH201', department: 'Mathematics', credits: 3 },
+                { id: 5, name: 'Physics I', code: 'PHY101', department: 'Physics', credits: 4 },
+                { id: 6, name: 'Quantum Mechanics', code: 'PHY301', department: 'Physics', credits: 3 },
+                { id: 7, name: 'Organic Chemistry', code: 'CHEM201', department: 'Chemistry', credits: 4 },
+                { id: 8, name: 'Molecular Biology', code: 'BIO201', department: 'Biology', credits: 3 },
+                { id: 9, name: 'Circuit Theory', code: 'EE201', department: 'Electrical Engineering', credits: 4 },
+                { id: 10, name: 'Thermodynamics', code: 'ME201', department: 'Mechanical Engineering', credits: 3 }
+            ];
+        }
+
+        // Generate demo departments
+        function generateDemoDepartments() {
+            return [
+                { id: 1, name: 'Computer Science', head: 'Dr. Sarah Johnson' },
+                { id: 2, name: 'Mathematics', head: 'Prof. Michael Smith' },
+                { id: 3, name: 'Physics', head: 'Dr. Emily Davis' },
+                { id: 4, name: 'Chemistry', head: 'Prof. James Wilson' },
+                { id: 5, name: 'Biology', head: 'Dr. Lisa Anderson' },
+                { id: 6, name: 'Electrical Engineering', head: 'Prof. Robert Taylor' },
+                { id: 7, name: 'Mechanical Engineering', head: 'Dr. Maria Garcia' },
+                { id: 8, name: 'Civil Engineering', head: 'Prof. David Martinez' },
+                { id: 9, name: 'Business Administration', head: 'Dr. Jennifer Brown' },
+                { id: 10, name: 'Economics', head: 'Prof. William Jones' }
+            ];
         }
 
         // Generate demo data

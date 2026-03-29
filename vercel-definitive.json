@@ -1,32 +1,7 @@
 {
   "version": 2,
-  "name": "campus-connect",
-  "builds": [
-    {
-      "src": "dashboard-fixed.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "simple-login.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "courses.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "frontend/*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "frontend/*.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "frontend/*.js",
-      "use": "@vercel/static"
-    }
-  ],
+  "cleanUrls": true,
+  "trailingSlash": false,
   "routes": [
     {
       "src": "/",

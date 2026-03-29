@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
   "routes": [
     {
       "src": "/",
@@ -22,10 +24,6 @@
       "dest": "/courses.html"
     },
     {
-      "src": "/data-recovery",
-      "dest": "/data-recovery.html"
-    },
-    {
       "src": "/simple-login.html",
       "dest": "/simple-login.html"
     },
@@ -36,10 +34,6 @@
     {
       "src": "/courses.html",
       "dest": "/courses.html"
-    },
-    {
-      "src": "/data-recovery.html",
-      "dest": "/data-recovery.html"
     },
     {
       "src": "/frontend/(.*)",

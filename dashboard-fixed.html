@@ -562,8 +562,9 @@
                 // Check if we already have students in localStorage
                 const existingStudents = JSON.parse(localStorage.getItem('students') || '[]');
                 
+                // Only generate demo data if absolutely no students exist
                 if (existingStudents.length === 0) {
-                    console.log('No students found, generating demo data...');
+                    console.log('No students found anywhere, generating demo data...');
                     
                     // Generate demo students
                     const demoStudents = generateDemoStudents();
@@ -577,6 +578,11 @@
                     console.log('Demo data generated and saved to localStorage');
                 } else {
                     console.log('Found existing students in localStorage:', existingStudents.length);
+                    // Ensure existing data is also saved to other collections
+                    if (existingStudents.length > 200) {
+                        // If we have more than 200 students, we likely have user-created data
+                        console.log('User-created data detected, preserving all students');
+                    }
                 }
             } catch (error) {
                 console.error('Error ensuring demo data:', error);

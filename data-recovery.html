@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Recovery Tool - Campus Connect</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .section h3 {
+            color: #495057;
+            margin-top: 0;
+        }
+        .data-display {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn.success {
+            background: #28a745;
+        }
+        .btn.success:hover {
+            background: #1e7e34;
+        }
+        .btn.danger {
+            background: #dc3545;
+        }
+        .btn.danger:hover {
+            background: #c82333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Campus Connect Data Recovery Tool</h1>
+        
+        <div class="section">
+            <h3>📊 Current Data Status</h3>
+            <div id="dataStatus" class="status info">Checking data...</div>
+            <button class="btn" onclick="checkData()">Check Data Status</button>
+        </div>
+
+        <div class="section">
+            <h3>👥 Students Data</h3>
+            <div id="studentsInfo" class="data-display">Loading...</div>
+            <button class="btn" onclick="showStudents()">Show Students</button>
+            <button class="btn success" onclick="backupStudents()">Backup Students</button>
+        </div>
+
+        <div class="section">
+            <h3>👤 User Authentication</h3>
+            <div id="authInfo" class="data-display">Loading...</div>
+            <button class="btn" onclick="showAuth()">Show Auth Data</button>
+            <button class="btn" onclick="clearAuth()">Clear Auth Data</button>
+        </div>
+
+        <div class="section">
+            <h3>🔧 Recovery Options</h3>
+            <button class="btn success" onclick="recoverData()">Recover Lost Data</button>
+            <button class="btn" onclick="exportData()">Export All Data</button>
+            <button class="btn danger" onclick="clearAllData()">Clear All Data</button>
+        </div>
+
+        <div class="section">
+            <h3>📈 Data Statistics</h3>
+            <div id="statistics" class="data-display">Loading...</div>
+            <button class="btn" onclick="showStatistics()">Show Statistics</button>
+        </div>
+    </div>
+
+    <script>
+        function checkData() {
+            const status = document.getElementById('dataStatus');
+            const students = JSON.parse(localStorage.getItem('students') || '[]');
+            const currentUser = localStorage.getItem('currentUser');
+            const users = JSON.parse(localStorage.getItem('campusUsers') || '{}');
+            
+            let statusHTML = `
+                <strong>Students:</strong> ${students.length} found<br>
+                <strong>Current User:</strong> ${currentUser ? 'Logged in' : 'Not logged in'}<br>
+                <strong>Registered Users:</strong> ${Object.keys(users).length} found<br>
+                <strong>Last Updated:</strong> ${new Date().toLocaleString()}
+            `;
+            
+            if (students.length > 0) {
+                status.className = 'status success';
+                statusHTML += '<br><strong>✅ Data appears to be intact</strong>';
+            } else {
+                status.className = 'status error';
+                statusHTML += '<br><strong>❌ No student data found</strong>';
+            }
+            
+            status.innerHTML = statusHTML;
+        }
+
+        function showStudents() {
+            const students = JSON.parse(localStorage.getItem('students') || '[]');
+            const display = document.getElementById('studentsInfo');
+            
+            if (students.length === 0) {
+                display.innerHTML = 'No students found in localStorage';
+                return;
+            }
+            
+            let html = `<strong>Total Students: ${students.length}</strong><br><br>`;
+            students.slice(0, 10).forEach((student, index) => {
+                html += `${index + 1}. ID: ${student.id}, Name: ${student.name}, Dept: ${student.department}<br>`;
+            });
+            
+            if (students.length > 10) {
+                html += `<br>... and ${students.length - 10} more students`;
+            }
+            
+            display.innerHTML = html;
+        }
+
+        function showAuth() {
+            const currentUser = localStorage.getItem('currentUser');
+            const users = JSON.parse(localStorage.getItem('campusUsers') || '{}');
+            const display = document.getElementById('authInfo');
+            
+            let html = '';
+            
+            if (currentUser) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    html += `<strong>Current User:</strong><br>`;
+                    html += `Username: ${user.username}<br>`;
+                    html += `Name: ${user.name}<br>`;
+                    html += `Role: ${user.role}<br>`;
+                    html += `Email: ${user.email}<br><br>`;
+                } catch (e) {
+                    html += 'Invalid current user data<br><br>';
+                }
+            } else {
+                html += 'No current user logged in<br><br>';
+            }
+            
+            html += `<strong>Registered Users (${Object.keys(users).length}):</strong><br>`;
+            Object.keys(users).forEach(username => {
+                const user = users[username];
+                html += `${username} - ${user.role} - ${user.name}<br>`;
+            });
+            
+            display.innerHTML = html;
+        }
+
+        function backupStudents() {
+            const students = JSON.parse(localStorage.getItem('students') || '[]');
+            const backup = {
+                timestamp: new Date().toISOString(),
+                count: students.length,
+                students: students
+            };
+            
+            localStorage.setItem('students_backup', JSON.stringify(backup));
+            alert('Students data backed up successfully!');
+        }
+
+        function recoverData() {
+            // Try to recover from backup
+            const backup = JSON.parse(localStorage.getItem('students_backup') || '{}');
+            if (backup.students && backup.students.length > 0) {
+                if (confirm(`Recover ${backup.students.length} students from backup dated ${new Date(backup.timestamp).toLocaleString()}?`)) {
+                    localStorage.setItem('students', JSON.stringify(backup.students));
+                    alert('Data recovered successfully!');
+                    checkData();
+                    showStudents();
+                }
+            } else {
+                alert('No backup found to recover from!');
+            }
+        }
+
+        function exportData() {
+            const data = {
+                students: JSON.parse(localStorage.getItem('students') || '[]'),
+                currentUser: localStorage.getItem('currentUser'),
+                users: JSON.parse(localStorage.getItem('campusUsers') || '{}'),
+                timestamp: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `campus-connect-backup-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearAuth() {
+            if (confirm('Clear all authentication data? This will log you out.')) {
+                localStorage.removeItem('currentUser');
+                alert('Auth data cleared!');
+                showAuth();
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ WARNING: This will delete ALL data including students, users, and settings. Are you absolutely sure?')) {
+                if (confirm('This action cannot be undone. Are you really sure?')) {
+                    localStorage.clear();
+                    alert('All data cleared!');
+                    checkData();
+                    showStudents();
+                    showAuth();
+                }
+            }
+        }
+
+        function showStatistics() {
+            const students = JSON.parse(localStorage.getItem('students') || '[]');
+            const users = JSON.parse(localStorage.getItem('campusUsers') || '{}');
+            const display = document.getElementById('statistics');
+            
+            if (students.length === 0) {
+                display.innerHTML = 'No data to analyze';
+                return;
+            }
+            
+            const departments = {};
+            const totalMarks = students.reduce((sum, s) => sum + (s.marks || 0), 0);
+            const totalAttendance = students.reduce((sum, s) => sum + (s.attendance || 0), 0);
+            
+            students.forEach(student => {
+                const dept = student.department || 'Unknown';
+                departments[dept] = (departments[dept] || 0) + 1;
+            });
+            
+            let html = `
+                <strong>Student Statistics:</strong><br>
+                Total Students: ${students.length}<br>
+                Average Marks: ${(totalMarks / students.length).toFixed(1)}%<br>
+                Average Attendance: ${(totalAttendance / students.length).toFixed(1)}%<br>
+                <br><strong>Department Distribution:</strong><br>
+            `;
+            
+            Object.entries(departments).forEach(([dept, count]) => {
+                html += `${dept}: ${count} students (${((count/students.length)*100).toFixed(1)}%)<br>`;
+            });
+            
+            display.innerHTML = html;
+        }
+
+        // Auto-check data on page load
+        window.addEventListener('load', function() {
+            checkData();
+            showStudents();
+            showAuth();
+            showStatistics();
+        });
+    </script>
+</body>
+</html>

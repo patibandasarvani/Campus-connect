@@ -885,38 +885,57 @@
                     </tr>
                 `;
 
-                students = await api.getStudents();
+                // First try to load from localStorage (most reliable)
+                const localStudents = JSON.parse(localStorage.getItem('students') || '[]');
+                console.log('Local students found:', localStudents.length);
                 
-                // Generate demo students if none exist
+                // Then try API
+                try {
+                    students = await api.getStudents();
+                    console.log('API students found:', students.length);
+                    
+                    // If API has no students but localStorage has some, use localStorage
+                    if (students.length === 0 && localStudents.length > 0) {
+                        console.log('Using localStorage students as fallback');
+                        students = localStudents;
+                    }
+                } catch (apiError) {
+                    console.log('API failed, using localStorage:', apiError.message);
+                    students = localStudents;
+                }
+                
+                // Only generate demo students if absolutely no students exist
                 if (students.length === 0) {
-                    console.log('No students found, generating demo data...');
+                    console.log('No students found anywhere, generating demo data...');
                     students = generateDemoStudents();
                     // Save to localStorage
                     localStorage.setItem('students', JSON.stringify(students));
-                    // Also save to backend if available
-                    try {
-                        for (const student of students) {
-                            await api.addStudent(student);
-                        }
-                    } catch (error) {
-                        console.log('Backend not available, using localStorage only');
-                    }
+                    console.log('Generated and saved', students.length, 'demo students');
+                } else {
+                    // Always save current students to localStorage to ensure persistence
+                    localStorage.setItem('students', JSON.stringify(students));
+                    console.log('Saved', students.length, 'students to localStorage');
                 }
                 
                 displayStudents();
                 updateStats();
             } catch (error) {
+                console.error('Error in loadStudents:', error);
                 showAlert('Error loading students: ' + error.message, 'error');
+                
                 // Fallback to localStorage
-                const savedStudents = JSON.parse(localStorage.getItem('students') || '[]');
-                if (savedStudents.length === 0) {
+                const fallbackStudents = JSON.parse(localStorage.getItem('students') || '[]');
+                if (fallbackStudents.length > 0) {
+                    students = fallbackStudents;
+                    displayStudents();
+                    updateStats();
+                } else {
+                    // Last resort - generate demo students
                     students = generateDemoStudents();
                     localStorage.setItem('students', JSON.stringify(students));
-                } else {
-                    students = savedStudents;
+                    displayStudents();
+                    updateStats();
                 }
-                displayStudents();
-                updateStats();
             }
         }
 

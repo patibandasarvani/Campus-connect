@@ -1,7 +1,7 @@
 # College Management System - Main Flask Application
 # Production-ready REST API with CORS and proper configuration
 
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from datetime import timedelta
@@ -112,6 +112,22 @@ def handle_exception(e):
 # Root endpoint
 @app.route('/')
 def index():
+    return send_from_directory('../', 'simple-login.html')
+
+# Serve static files with specific extensions
+@app.route('/<path:filename>')
+def serve_static(filename):
+    # Only serve static files, not API routes
+    if '.' in filename and filename.split('.')[-1] in ['html', 'css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'ico', 'svg']:
+        return send_from_directory('../', filename)
+    else:
+        # Let API routes handle other paths
+        from flask import abort
+        abort(404)
+
+# API Info endpoint
+@app.route('/api/info')
+def api_info():
     return jsonify({
         'success': True,
         'message': 'College Management System API',
@@ -154,53 +170,6 @@ def health_check():
             'database': 'disconnected',
             'error': str(e)
         }), 500
-
-# API info endpoint
-@app.route('/api/info')
-def api_info():
-    return jsonify({
-        'success': True,
-        'api_info': {
-            'name': 'College Management System API',
-            'version': '1.0.0',
-            'description': 'RESTful API for managing college students and users',
-            'authentication': 'Session-based',
-            'data_format': 'JSON',
-            'cors_enabled': True
-        },
-        'available_endpoints': {
-            'authentication': [
-                'POST /api/auth/register',
-                'POST /api/auth/login',
-                'GET /api/auth/logout',
-                'GET /api/auth/profile',
-                'PUT /api/auth/profile',
-                'GET /api/auth/check'
-            ],
-            'students': [
-                'GET /api/students',
-                'POST /api/students',
-                'GET /api/students/<id>',
-                'PUT /api/students/<id>',
-                'DELETE /api/students/<id>',
-                'GET /api/students/stats',
-                'GET /api/students/departments',
-                'GET /api/students/search'
-            ],
-            'admin': [
-                'GET /api/admin/dashboard',
-                'GET /api/admin/users',
-                'POST /api/admin/users',
-                'PUT /api/admin/users/<id>',
-                'DELETE /api/admin/users/<id>',
-                'GET /api/admin/reports/students',
-                'GET /api/admin/reports/users',
-                'GET /api/admin/audit-logs',
-                'GET /api/admin/system/health',
-                'POST /api/admin/backup'
-            ]
-        }
-    })
 
 # Session management
 @app.before_request

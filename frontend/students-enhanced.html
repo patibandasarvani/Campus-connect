@@ -905,8 +905,8 @@
             const demoStudents = [];
             let studentId = 1;
             
-            // Generate 35 students (more than 30 as requested)
-            for (let i = 0; i < 35; i++) {
+            // Generate 200 students with 20 students per department (10 departments)
+            for (let i = 0; i < 200; i++) {
                 const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
                 const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
                 const department = departments[Math.floor(Math.random() * departments.length)];
@@ -925,11 +925,14 @@
                 });
             }
             
-            // Ensure at least 3 students per department
+            // Second pass: Ensure exactly 20 students per department with sequential IDs
             departments.forEach(dept => {
                 const deptStudents = demoStudents.filter(s => s.department === dept);
-                if (deptStudents.length < 3) {
-                    for (let i = deptStudents.length; i < 3; i++) {
+                const currentCount = deptStudents.length;
+                
+                if (currentCount < 20) {
+                    // Add more students to reach exactly 20
+                    for (let i = currentCount; i < 20; i++) {
                         const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
                         const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
                         const semester = Math.floor(Math.random() * 8) + 1;
@@ -948,6 +951,12 @@
                     }
                 }
             });
+            
+            // Final pass: Sort by ID to ensure sequential order
+            demoStudents.sort((a, b) => a.id - b.id);
+            
+            console.log(`Generated ${demoStudents.length} demo students with 20 per department`);
+            return demoStudents;
             
             console.log(`Generated ${demoStudents.length} demo students`);
             return demoStudents;

@@ -1,0 +1,36 @@
+{
+  "name": "campus-connect",
+  "version": "1.0.0",
+  "description": "Campus Connect - College Management System",
+  "main": "api/index.py",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "deploy": "vercel --prod",
+    "start": "python backend/app.py"
+  },
+  "dependencies": {
+    "@vercel/node": "^2.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^28.0.0"
+  },
+  "keywords": [
+    "college",
+    "management",
+    "system",
+    "flask",
+    "python",
+    "vercel"
+  ],
+  "author": "patibandasarvani",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patibandasarvani/Campus-connect.git"
+  },
+  "homepage": "https://campus-connect.vercel.app",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

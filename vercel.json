@@ -17,6 +17,30 @@
   ],
   "routes": [
     {
+      "src": "/simple-login.html",
+      "dest": "/simple-login.html"
+    },
+    {
+      "src": "/dashboard-fixed.html",
+      "dest": "/dashboard-fixed.html"
+    },
+    {
+      "src": "/courses.html",
+      "dest": "/courses.html"
+    },
+    {
+      "src": "/frontend/(.*)",
+      "dest": "/frontend/$1"
+    },
+    {
+      "src": "/backend/(.*)",
+      "dest": "/backend/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/simple-login.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }

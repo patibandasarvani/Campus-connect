@@ -236,6 +236,26 @@
         // Enhanced user management with persistent storage
         let users = JSON.parse(localStorage.getItem('campusUsers') || '{}');
         
+        // Check if user is already logged in
+        function checkExistingLogin() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    if (user && user.username) {
+                        console.log('User already logged in:', user.username);
+                        // Redirect to dashboard if already logged in
+                        window.location.href = 'dashboard-fixed.html';
+                        return true;
+                    }
+                } catch (error) {
+                    console.log('Invalid stored user data, clearing...');
+                    localStorage.removeItem('currentUser');
+                }
+            }
+            return false;
+        }
+        
         // Initialize default users if none exist
         if (Object.keys(users).length === 0) {
             users = {
@@ -245,6 +265,13 @@
             };
             localStorage.setItem('campusUsers', JSON.stringify(users));
         }
+
+        // Check for existing login on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkExistingLogin()) {
+                console.log('No active session found, showing login form');
+            }
+        });
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();

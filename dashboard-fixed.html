@@ -481,20 +481,56 @@
 
         // Check authentication
         function checkAuthentication() {
-            console.log('Checking authentication...', currentUser);
+            console.log('Checking authentication...');
             
-            if (!currentUser || !currentUser.username) {
-                console.log('No user found, redirecting to login');
+            // Load current user from localStorage fresh
+            const storedUser = localStorage.getItem('currentUser');
+            console.log('Raw stored user:', storedUser);
+            
+            if (!storedUser) {
+                console.log('No user found in localStorage, redirecting to login');
                 window.location.href = 'simple-login.html';
                 return;
             }
             
-            // Update user info
-            document.getElementById('userName').textContent = currentUser.name || currentUser.username;
-            document.getElementById('userRole').textContent = currentUser.role ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : 'Administrator';
-            document.getElementById('welcomeMessage').textContent = `Welcome, ${currentUser.name || currentUser.username}!`;
-            
-            console.log('Authentication successful, user:', currentUser.username);
+            try {
+                currentUser = JSON.parse(storedUser);
+                console.log('Parsed current user:', currentUser);
+                
+                if (!currentUser || !currentUser.username) {
+                    console.log('Invalid user data, redirecting to login');
+                    localStorage.removeItem('currentUser'); // Clear invalid data
+                    window.location.href = 'simple-login.html';
+                    return;
+                }
+                
+                // Update user info
+                document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+                document.getElementById('userRole').textContent = currentUser.role ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : 'Administrator';
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${currentUser.name || currentUser.username}!`;
+                
+                console.log('Authentication successful, user:', currentUser.username);
+                
+                // Set up session monitoring
+                setupSessionMonitoring();
+                
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                localStorage.removeItem('currentUser');
+                window.location.href = 'simple-login.html';
+            }
+        }
+
+        // Monitor session and handle logout
+        function setupSessionMonitoring() {
+            // Check if user is still logged in every 30 seconds
+            setInterval(() => {
+                const checkUser = localStorage.getItem('currentUser');
+                if (!checkUser) {
+                    console.log('User session lost, redirecting to login');
+                    window.location.href = 'simple-login.html';
+                }
+            }, 30000);
         }
 
         // Initialize dashboard

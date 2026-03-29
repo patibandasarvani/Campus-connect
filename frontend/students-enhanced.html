@@ -834,7 +834,31 @@
         });
 
         function checkAuth() {
-            if (!currentUser.username) {
+            // Load current user from localStorage fresh
+            const storedUser = localStorage.getItem('currentUser');
+            console.log('Students page - checking auth, stored user:', storedUser);
+            
+            if (!storedUser) {
+                console.log('No user found in students page, redirecting to login');
+                window.location.href = '../simple-login.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(storedUser);
+                console.log('Students page - parsed user:', currentUser);
+                
+                if (!currentUser || !currentUser.username) {
+                    console.log('Invalid user data in students page, redirecting to login');
+                    localStorage.removeItem('currentUser');
+                    window.location.href = '../simple-login.html';
+                    return;
+                }
+                
+                console.log('Students page - authentication successful for:', currentUser.username);
+            } catch (error) {
+                console.error('Error parsing user data in students page:', error);
+                localStorage.removeItem('currentUser');
                 window.location.href = '../simple-login.html';
             }
         }

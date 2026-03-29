@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Connect - College Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+            animation: alertSlideIn 0.3s ease-out;
+        }
+
+        @keyframes alertSlideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
+        }
+
+        .demo-credentials {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            font-size: 0.95rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .demo-credentials h4 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .demo-credentials p {
+            margin: 0.5rem 0;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .demo-credentials a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .demo-credentials a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">🎓</div>
+        <h1>Campus Connect</h1>
+        <p class="subtitle">College Management System</p>
+
+        <div id="alert" class="alert"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your username">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="btn" id="loginBtn">
+                <span id="btnText">Sign In</span>
+            </button>
+        </form>
+
+        <div class="demo-credentials">
+            <h4>🔑 Demo Credentials</h4>
+            <p><strong>Admin:</strong> admin / admin123</p>
+            <p><strong>Faculty:</strong> faculty / faculty123</p>
+            <p><strong>Student:</strong> student / student123</p>
+            <p><a href="#" onclick="showRegistration()" style="color: #667eea; font-weight: bold;">👉 Create New Account</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced user management with persistent storage
+        let users = JSON.parse(localStorage.getItem('campusUsers') || '{}');
+        
+        // Initialize default users if none exist
+        if (Object.keys(users).length === 0) {
+            users = {
+                'admin': { password: 'admin123', role: 'admin', name: 'Administrator', email: 'admin@campus.edu', department: 'Administration' },
+                'faculty': { password: 'faculty123', role: 'faculty', name: 'John Faculty', email: 'faculty@campus.edu', department: 'Computer Science' },
+                'student': { password: 'student123', role: 'student', name: 'Jane Student', email: 'student@campus.edu', department: 'Computer Science' }
+            };
+            localStorage.setItem('campusUsers', JSON.stringify(users));
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const alert = document.getElementById('alert');
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            
+            // Show loading
+            loginBtn.disabled = true;
+            btnText.innerHTML = '<span class="loading"></span>Signing in...';
+            
+            // Try backend login first, then fallback to localStorage
+            try {
+                // Import API service
+                const script = document.createElement('script');
+                script.src = 'frontend/api.js';
+                script.onload = async () => {
+                    try {
+                        const user = await api.login(username, password);
+                        
+                        if (user) {
+                            alert.className = 'alert success';
+                            alert.textContent = `✅ Login successful! Welcome ${user.full_name || user.name}`;
+                            alert.style.display = 'block';
+                            
+                            // Redirect to dashboard after delay
+                            setTimeout(() => {
+                                window.location.href = 'dashboard-fixed.html';
+                            }, 1500);
+                        } else {
+                            // Fallback to localStorage authentication
+                            fallbackLogin();
+                        }
+                    } catch (error) {
+                        console.log('Backend login failed, using fallback');
+                        fallbackLogin();
+                    }
+                };
+                script.onerror = fallbackLogin;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                fallbackLogin();
+            }
+            
+            // Fallback login function
+            async function fallbackLogin() {
+                const users = JSON.parse(localStorage.getItem('campusUsers') || '{}');
+                
+                if (users[username] && users[username].password === password) {
+                    const user = users[username];
+                    alert.className = 'alert success';
+                    alert.textContent = `✅ Login successful! Welcome ${user.name}`;
+                    alert.style.display = 'block';
+                    
+                    // Store user info
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        username: username,
+                        role: user.role,
+                        name: user.name,
+                        email: user.email,
+                        department: user.department
+                    }));
+                    
+                    // Redirect to dashboard after delay
+                    setTimeout(() => {
+                        window.location.href = 'dashboard-fixed.html';
+                    }, 1500);
+                    
+                } else {
+                    alert.className = 'alert error';
+                    alert.textContent = `❌ Invalid username or password. Try admin/admin123`;
+                    alert.style.display = 'block';
+                }
+                
+                // Reset button
+                loginBtn.disabled = false;
+                btnText.textContent = 'Sign In';
+            }
+        });
+
+        // Add registration functionality
+        function showRegistration() {
+            const loginContainer = document.querySelector('.login-container');
+            loginContainer.innerHTML = `
+                <div class="logo">🎓</div>
+                <h1>Campus Connect</h1>
+                <p class="subtitle">Create Your Account</p>
+
+                <div id="alert" class="alert"></div>
+
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regFullName">Full Name</label>
+                        <input type="text" id="regFullName" required placeholder="Enter your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" required placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regUsername">Username</label>
+                        <input type="text" id="regUsername" required placeholder="Choose a username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regRole">Role</label>
+                        <select id="regRole" required>
+                            <option value="">Select your role</option>
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regDepartment">Department</label>
+                        <select id="regDepartment" required>
+                            <option value="">Select department</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Civil">Civil</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" required placeholder="Create password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirm Password</label>
+                        <input type="password" id="regConfirmPassword" required placeholder="Confirm password">
+                    </div>
+
+                    <button type="submit" class="btn" id="regBtn">
+                        <span id="regBtnText">Create Account</span>
+                    </button>
+                </form>
+
+                <div class="demo-credentials">
+                    <h4>🔑 Already have an account?</h4>
+                    <p><a href="#" onclick="showLogin()" style="color: #667eea;">Sign in here</a></p>
+                </div>
+            `;
+
+            // Add registration form handler
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const fullName = document.getElementById('regFullName').value.trim();
+                const email = document.getElementById('regEmail').value.trim();
+                const username = document.getElementById('regUsername').value.trim();
+                const role = document.getElementById('regRole').value;
+                const department = document.getElementById('regDepartment').value;
+                const password = document.getElementById('regPassword').value;
+                const confirmPassword = document.getElementById('regConfirmPassword').value;
+                const alert = document.getElementById('alert');
+                const regBtn = document.getElementById('regBtn');
+                const regBtnText = document.getElementById('regBtnText');
+                
+                // Validation
+                if (password !== confirmPassword) {
+                    alert.className = 'alert error';
+                    alert.textContent = '❌ Passwords do not match';
+                    alert.style.display = 'block';
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert.className = 'alert error';
+                    alert.textContent = '❌ Password must be at least 6 characters';
+                    alert.style.display = 'block';
+                    return;
+                }
+                
+                if (users[username]) {
+                    alert.className = 'alert error';
+                    alert.textContent = '❌ Username already exists';
+                    alert.style.display = 'block';
+                    return;
+                }
+                
+                // Show loading
+                regBtn.disabled = true;
+                regBtnText.innerHTML = '<span class="loading"></span>Creating...';
+                
+                // Simulate registration
+                setTimeout(() => {
+                    // Debug: Show current users before adding
+                    console.log('Users before registration:', Object.keys(users));
+                    
+                    // Add new user
+                    users[username] = {
+                        password: password,
+                        role: role,
+                        name: fullName,
+                        email: email,
+                        department: department
+                    };
+                    
+                    // Save to localStorage
+                    localStorage.setItem('campusUsers', JSON.stringify(users));
+                    
+                    // Debug: Verify save
+                    const savedUsers = JSON.parse(localStorage.getItem('campusUsers') || '{}');
+                    console.log('Users after registration:', Object.keys(savedUsers));
+                    console.log('New user exists:', savedUsers[username] ? 'YES' : 'NO');
+                    
+                    alert.className = 'alert success';
+                    alert.textContent = `✅ Account created successfully! Username: ${username}. Please login.`;
+                    alert.style.display = 'block';
+                    
+                    // Reset button
+                    regBtn.disabled = false;
+                    regBtnText.textContent = 'Create Account';
+                    
+                    // Redirect to login after delay
+                    setTimeout(() => {
+                        showLogin();
+                    }, 2000);
+                }, 1000);
+            });
+        }
+
+        function showLogin() {
+            location.reload(); // Reload to show original login form
+        }
+
+        // Hide alert when user starts typing
+        document.getElementById('username').addEventListener('input', function() {
+            document.getElementById('alert').style.display = 'none';
+        });
+        
+        document.getElementById('password').addEventListener('input', function() {
+            document.getElementById('alert').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

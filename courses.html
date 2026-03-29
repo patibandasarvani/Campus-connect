@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management - Campus Connect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: #666;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        /* Course Grid */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .course-code {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-instructor {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .course-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .course-body {
+            padding: 1.5rem;
+        }
+
+        .course-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .course-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .course-students {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .students-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .students-count {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .student-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .student-chip {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #495057;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+            }
+            
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🎓 Campus Connect</div>
+        <nav class="nav-links">
+            <li class="nav-item">
+                <a href="dashboard-fixed.html" class="nav-link">Dashboard</a>
+            </li>
+            <a href="students.html" class="nav-link">Students</a>
+            <a href="courses.html" class="nav-link">Courses</a>
+            <a href="#" class="nav-link" onclick="showSchedule()">Schedule</a>
+            <a href="#" class="nav-link" onclick="showGrades()">Grades</a>
+        </nav>
+        <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Alert Container -->
+        <div id="alertContainer" class="alert"></div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Course Management</h1>
+                <p>Manage courses, enrollments, and track student progress</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="showAddCourseModal()">
+                    <span>➕</span> Add Course
+                </button>
+                <button class="btn btn-warning" onclick="generateSchedule()">
+                    <span>📅</span> Generate Schedule
+                </button>
+                <button class="btn btn-secondary" onclick="exportCourses()">
+                    <span>📊</span> Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stat-card primary">
+                <div class="stat-icon">📚</div>
+                <div class="stat-number" id="totalCourses">0</div>
+                <div class="stat-label">Total Courses</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" id="totalEnrollments">0</div>
+                <div class="stat-label">Total Enrollments</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon">👨‍🏫</div>
+                <div class="stat-number" id="totalInstructors">0</div>
+                <div class="stat-label">Instructors</div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-icon">📊</div>
+                <div class="stat-number" id="avgClassSize">0</div>
+                <div class="stat-label">Avg Class Size</div>
+            </div>
+        </div>
+
+        <!-- Course Grid -->
+        <div class="course-grid" id="courseGrid">
+            <!-- Courses will be populated here -->
+        </div>
+    </div>
+
+    <!-- Add/Edit Course Modal -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Course</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="courseForm">
+                <input type="hidden" id="courseId">
+                
+                <div class="form-group">
+                    <label for="courseCode">Course Code *</label>
+                    <input type="text" id="courseCode" required placeholder="e.g., CS101">
+                </div>
+
+                <div class="form-group">
+                    <label for="courseTitle">Course Title *</label>
+                    <input type="text" id="courseTitle" required placeholder="Enter course title">
+                </div>
+
+                <div class="form-group">
+                    <label for="courseInstructor">Instructor *</label>
+                    <input type="text" id="courseInstructor" required placeholder="Enter instructor name">
+                </div>
+
+                <div class="form-group">
+                    <label for="courseDepartment">Department *</label>
+                    <select id="courseDepartment" required>
+                        <option value="">Select Department</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseCredits">Credits</label>
+                    <input type="number" id="courseCredits" min="1" max="6" value="3">
+                </div>
+
+                <div class="form-group">
+                    <label for="courseSemester">Semester</label>
+                    <select id="courseSemester">
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseDescription">Description</label>
+                    <textarea id="courseDescription" placeholder="Enter course description"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn">Save Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        
+        // Authentication check
+        if (!currentUser.username) {
+            window.location.href = 'simple-login.html';
+        }
+
+        // Initialize data
+        let courses = [
+            {
+                id: 1,
+                code: 'CS101',
+                title: 'Introduction to Programming',
+                instructor: 'Dr. Sarah Johnson',
+                department: 'Computer Science',
+                credits: 3,
+                semester: 1,
+                description: 'Fundamentals of programming using Python',
+                students: ['Alice Johnson', 'Bob Smith', 'Carol Davis'],
+                schedule: 'Mon, Wed, Fri - 9:00 AM',
+                room: 'Room 101'
+            },
+            {
+                id: 2,
+                code: 'CS201',
+                title: 'Data Structures',
+                instructor: 'Dr. Sarah Johnson',
+                department: 'Computer Science',
+                credits: 4,
+                semester: 2,
+                description: 'Advanced data structures and algorithms',
+                students: ['Alice Johnson', 'David Wilson'],
+                schedule: 'Tue, Thu - 10:00 AM',
+                room: 'Room 102'
+            },
+            {
+                id: 3,
+                code: 'CS301',
+                title: 'Database Systems',
+                instructor: 'Dr. Sarah Johnson',
+                department: 'Computer Science',
+                credits: 4,
+                semester: 3,
+                description: 'Database design and SQL programming',
+                students: ['Liam Harris', 'Victor Walker'],
+                schedule: 'Mon, Wed - 11:00 AM',
+                room: 'Room 103'
+            },
+            {
+                id: 4,
+                code: 'MATH101',
+                title: 'Calculus I',
+                instructor: 'Prof. Michael Smith',
+                department: 'Mathematics',
+                credits: 4,
+                semester: 1,
+                description: 'Introduction to differential and integral calculus',
+                students: ['Carol Davis', 'Mia Martin'],
+                schedule: 'Mon, Wed, Fri - 10:00 AM',
+                room: 'Room 201'
+            },
+            {
+                id: 5,
+                code: 'MATH201',
+                title: 'Linear Algebra',
+                instructor: 'Prof. Michael Smith',
+                department: 'Mathematics',
+                credits: 3,
+                semester: 2,
+                description: 'Vector spaces and linear transformations',
+                students: ['Wendy Hall', 'Mia Martin'],
+                schedule: 'Tue, Thu - 2:00 PM',
+                room: 'Room 202'
+            },
+            {
+                id: 6,
+                code: 'PHY101',
+                title: 'General Physics',
+                instructor: 'Dr. Emily Davis',
+                department: 'Physics',
+                credits: 3,
+                semester: 1,
+                description: 'Introduction to mechanics and thermodynamics',
+                students: ['David Wilson', 'Noah Thompson'],
+                schedule: 'Mon, Wed, Fri - 11:00 AM',
+                room: 'Room 301'
+            },
+            {
+                id: 7,
+                code: 'PHY201',
+                title: 'Electromagnetism',
+                instructor: 'Dr. Emily Davis',
+                department: 'Physics',
+                credits: 4,
+                semester: 2,
+                description: 'Electric and magnetic fields',
+                students: ['Xavier Allen', 'David Wilson'],
+                schedule: 'Tue, Thu - 9:00 AM',
+                room: 'Room 302'
+            },
+            {
+                id: 8,
+                code: 'CHEM101',
+                title: 'General Chemistry',
+                instructor: 'Prof. James Wilson',
+                department: 'Chemistry',
+                credits: 3,
+                semester: 1,
+                description: 'Introduction to chemical principles',
+                students: ['Emma Brown', 'Olivia Garcia'],
+                schedule: 'Mon, Wed - 2:00 PM',
+                room: 'Room 401'
+            },
+            {
+                id: 9,
+                code: 'CHEM201',
+                title: 'Organic Chemistry',
+                instructor: 'Prof. James Wilson',
+                department: 'Chemistry',
+                credits: 4,
+                semester: 2,
+                description: 'Structure and reactions of organic compounds',
+                students: ['Olivia Garcia', 'Emma Brown'],
+                schedule: 'Tue, Thu - 10:00 AM',
+                room: 'Room 402'
+            },
+            {
+                id: 10,
+                code: 'BIO101',
+                title: 'Cell Biology',
+                instructor: 'Dr. Lisa Anderson',
+                department: 'Biology',
+                credits: 3,
+                semester: 1,
+                description: 'Structure and function of cells',
+                students: ['Frank Miller', 'Peter Martinez'],
+                schedule: 'Mon, Wed, Fri - 1:00 PM',
+                room: 'Room 501'
+            },
+            {
+                id: 11,
+                code: 'BIO201',
+                title: 'Molecular Biology',
+                instructor: 'Dr. Lisa Anderson',
+                department: 'Biology',
+                credits: 3,
+                semester: 2,
+                description: 'Molecular mechanisms of biological processes',
+                students: ['Peter Martinez', 'Frank Miller'],
+                schedule: 'Tue, Thu - 1:00 PM',
+                room: 'Room 502'
+            },
+            {
+                id: 12,
+                code: 'EE101',
+                title: 'Digital Logic Design',
+                instructor: 'Prof. Robert Taylor',
+                department: 'Electrical Engineering',
+                credits: 3,
+                semester: 1,
+                description: 'Introduction to digital circuits and logic design',
+                students: ['Grace Taylor', 'Quinn Robinson'],
+                schedule: 'Mon, Wed - 3:00 PM',
+                room: 'Room 601'
+            },
+            {
+                id: 13,
+                code: 'ME201',
+                title: 'Thermodynamics',
+                instructor: 'Dr. Maria Garcia',
+                department: 'Mechanical Engineering',
+                credits: 4,
+                semester: 2,
+                description: 'Heat transfer and energy systems',
+                students: ['Henry Anderson', 'Rachel Clark'],
+                schedule: 'Tue, Thu - 3:00 PM',
+                room: 'Room 701'
+            },
+            {
+                id: 14,
+                code: 'CE201',
+                title: 'Structural Analysis',
+                instructor: 'Prof. David Martinez',
+                department: 'Civil Engineering',
+                credits: 4,
+                semester: 2,
+                description: 'Analysis of structures and loads',
+                students: ['Ivy Thomas', 'Samuel Rodriguez'],
+                schedule: 'Mon, Wed - 4:00 PM',
+                room: 'Room 801'
+            },
+            {
+                id: 15,
+                code: 'BUS101',
+                title: 'Marketing Management',
+                instructor: 'Dr. Jennifer Brown',
+                department: 'Business Administration',
+                credits: 3,
+                semester: 1,
+                description: 'Principles of marketing and brand management',
+                students: ['Jack Jackson', 'Tina Lewis'],
+                schedule: 'Tue, Thu - 2:00 PM',
+                room: 'Room 901'
+            },
+            {
+                id: 16,
+                code: 'ECON101',
+                title: 'Microeconomics',
+                instructor: 'Prof. William Jones',
+                department: 'Economics',
+                credits: 3,
+                semester: 1,
+                description: 'Supply, demand, and market equilibrium',
+                students: ['Kate White', 'Uma Lee'],
+                schedule: 'Mon, Wed - 2:00 PM',
+                room: 'Room 902'
+            }
+        ];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            updateUserInfo();
+            loadCourses();
+            updateStats();
+        });
+
+        function checkAuth() {
+            if (!currentUser.username) {
+                window.location.href = 'simple-login.html';
+            }
+        }
+
+        function updateUserInfo() {
+            document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'simple-login.html';
+        }
+
+        function loadCourses() {
+            const courseGrid = document.getElementById('courseGrid');
+            courseGrid.innerHTML = '';
+            
+            courses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card';
+                courseCard.innerHTML = `
+                    <div class="course-header">
+                        <div class="course-code">${course.code}</div>
+                        <div class="course-title">${course.title}</div>
+                        <div class="course-instructor">${course.instructor}</div>
+                        <div class="course-badge">${course.credits} Credits</div>
+                    </div>
+                    <div class="course-body">
+                        <div class="course-info">
+                            <div class="info-item">
+                                <span>🏢</span>
+                                <span>${course.department}</span>
+                            </div>
+                            <div class="info-item">
+                                <span>📚</span>
+                                <span>Semester ${course.semester}</span>
+                            </div>
+                            <div class="info-item">
+                                <span>👥</span>
+                                <span>${course.students.length} Students</span>
+                            </div>
+                            <div class="info-item">
+                                <span>📍</span>
+                                <span>${course.room}</span>
+                            </div>
+                        </div>
+                        <div class="course-description">${course.description}</div>
+                        <div class="course-students">
+                            <div class="students-header">
+                                <span>Enrolled Students</span>
+                                <span class="students-count">${course.students.length}</span>
+                            </div>
+                            <div class="student-list">
+                                ${course.students.map(student => `<span class="student-chip">${student}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="course-actions">
+                            <button class="btn btn-sm" onclick="viewCourse(${course.id})">View</button>
+                            <button class="btn btn-sm btn-secondary" onclick="editCourse(${course.id})">Edit</button>
+                            <button class="btn btn-sm btn-warning" onclick="manageStudents(${course.id})">Students</button>
+                        </div>
+                    </div>
+                `;
+                courseGrid.appendChild(courseCard);
+            });
+        }
+
+        function updateStats() {
+            const totalCourses = courses.length;
+            const totalEnrollments = courses.reduce((sum, course) => sum + course.students.length, 0);
+            const instructors = [...new Set(courses.map(c => c.instructor))].length;
+            const avgClassSize = Math.round(totalEnrollments / totalCourses);
+            
+            document.getElementById('totalCourses').textContent = totalCourses;
+            document.getElementById('totalEnrollments').textContent = totalEnrollments;
+            document.getElementById('totalInstructors').textContent = instructors;
+            document.getElementById('avgClassSize').textContent = avgClassSize;
+        }
+
+        function showAddCourseModal() {
+            document.getElementById('modalTitle').textContent = 'Add Course';
+            document.getElementById('courseForm').reset();
+            document.getElementById('courseId').value = '';
+            document.getElementById('courseModal').style.display = 'block';
+        }
+
+        function editCourse(id) {
+            const course = courses.find(c => c.id === id);
+            if (course) {
+                document.getElementById('modalTitle').textContent = 'Edit Course';
+                document.getElementById('courseId').value = course.id;
+                document.getElementById('courseCode').value = course.code;
+                document.getElementById('courseTitle').value = course.title;
+                document.getElementById('courseInstructor').value = course.instructor;
+                document.getElementById('courseDepartment').value = course.department;
+                document.getElementById('courseCredits').value = course.credits;
+                document.getElementById('courseSemester').value = course.semester;
+                document.getElementById('courseDescription').value = course.description;
+                document.getElementById('courseModal').style.display = 'block';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('courseModal').style.display = 'none';
+        }
+
+        function viewCourse(id) {
+            const course = courses.find(c => c.id === id);
+            if (course) {
+                alert(`Course Details:\n\nCode: ${course.code}\nTitle: ${course.title}\nInstructor: ${course.instructor}\nDepartment: ${course.department}\nCredits: ${course.credits}\nSchedule: ${course.schedule}\nRoom: ${course.room}\nStudents: ${course.students.length}\n\nDescription: ${course.description}`);
+            }
+        }
+
+        function manageStudents(id) {
+            const course = courses.find(c => c.id === id);
+            if (course) {
+                alert(`Student Management for ${course.code}:\n\nCurrent Students: ${course.students.join(', ')}\n\nThis would open a detailed student management interface for this course.`);
+            }
+        }
+
+        // Form submission
+        document.getElementById('courseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const courseData = {
+                code: document.getElementById('courseCode').value,
+                title: document.getElementById('courseTitle').value,
+                instructor: document.getElementById('courseInstructor').value,
+                department: document.getElementById('courseDepartment').value,
+                credits: parseInt(document.getElementById('courseCredits').value),
+                semester: parseInt(document.getElementById('courseSemester').value),
+                description: document.getElementById('courseDescription').value,
+                students: [],
+                schedule: 'TBD',
+                room: 'TBD'
+            };
+            
+            const courseId = document.getElementById('courseId').value;
+            
+            if (courseId) {
+                // Edit existing course
+                const index = courses.findIndex(c => c.id == courseId);
+                if (index !== -1) {
+                    courses[index] = { ...courses[index], ...courseData };
+                    showAlert('Course updated successfully!', 'success');
+                }
+            } else {
+                // Add new course
+                const newCourse = {
+                    id: Math.max(...courses.map(c => c.id)) + 1,
+                    ...courseData
+                };
+                courses.push(newCourse);
+                showAlert('Course added successfully!', 'success');
+            }
+            
+            loadCourses();
+            updateStats();
+            closeModal();
+        });
+
+        function generateSchedule() {
+            showAlert('Generating course schedule...', 'info');
+            setTimeout(() => {
+                alert('Schedule Generated!\n\nA conflict-free schedule has been created considering:\n• Room availability\n• Instructor preferences\n• Student enrollment patterns\n\nThe schedule is now available in the Schedule section.');
+            }, 1500);
+        }
+
+        function exportCourses() {
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Code,Title,Instructor,Department,Credits,Semester,Students\n"
+                + courses.map(c => `${c.code},"${c.title}","${c.instructor}","${c.department}",${c.credits},${c.semester},${c.students.length}`).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `courses_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('Courses exported successfully!', 'success');
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertContainer');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Navigation functions
+        function showSchedule() {
+            alert('Schedule Management - This would show the complete course schedule with timetables and room assignments.');
+        }
+
+        function showGrades() {
+            window.location.href = 'students.html';
+        }
+
+        // Add primary class to first stat card
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstStatCard = document.querySelector('.stat-card');
+            if (firstStatCard) {
+                firstStatCard.classList.add('primary');
+            }
+            
+            // Update user info
+            updateUserInfo();
+            
+            // Setup role-based actions
+            setupRoleBasedActions();
+            
+            // Load courses
+            loadCourses();
+            updateStats();
+        });
+
+        // Update user info
+        function updateUserInfo() {
+            const userNameEl = document.getElementById('userName');
+            if (userNameEl) {
+                userNameEl.textContent = currentUser.name || currentUser.username;
+            }
+            
+            console.log('Courses page - User:', currentUser.username, 'Role:', currentUser.role);
+        }
+
+        // Setup role-based actions
+        function setupRoleBasedActions() {
+            const role = currentUser.role || 'admin';
+            console.log('Setting up courses page for role:', role);
+            
+            if (role === 'student') {
+                // Hide admin/faculty actions for students
+                const addCourseBtn = document.querySelector('button[onclick="openModal()"]');
+                if (addCourseBtn) {
+                    addCourseBtn.style.display = 'none';
+                }
+                
+                // Filter courses to show only student's enrolled courses
+                filterStudentCourses();
+            } else if (role === 'faculty') {
+                // Show only faculty's courses
+                filterFacultyCourses();
+            }
+            // Admin sees all courses
+        }
+
+        // Filter courses for student
+        function filterStudentCourses() {
+            // For demo, show all courses but in real scenario would filter by enrollment
+            console.log('Showing courses for student:', currentUser.username);
+        }
+
+        // Filter courses for faculty
+        function filterFacultyCourses() {
+            if (currentUser.department) {
+                // Filter courses by faculty's department
+                courses = courses.filter(course => course.department === currentUser.department);
+                console.log('Showing courses for faculty in department:', currentUser.department);
+                loadCourses();
+                updateStats();
+            }
+        }
+    </script>
+</body>
+</html>

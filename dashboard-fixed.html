@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Management System - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .user-role {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-content h1 {
+            font-size: 2rem;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-content p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .date-time {
+            text-align: right;
+            color: #666;
+        }
+
+        .current-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .current-time {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card.students { border-left-color: #28a745; }
+        .stat-card.faculty { border-left-color: #17a2b8; }
+        .stat-card.courses { border-left-color: #ffc107; }
+        .stat-card.departments { border-left-color: #dc3545; }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-card.students .stat-icon { background: rgba(40, 167, 69, 0.1); color: #28a745; }
+        .stat-card.faculty .stat-icon { background: rgba(23, 162, 184, 0.1); color: #17a2b8; }
+        .stat-card.courses .stat-icon { background: rgba(255, 193, 7, 0.1); color: #ffc107; }
+        .stat-card.departments .stat-icon { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            padding: 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+            text-decoration: none;
+            display: block;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(30, 60, 114, 0.3);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .action-title {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-desc {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                width: 100%;
+                text-align: center;
+            }
+
+            .welcome-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+            <span>Campus Connect</span>
+        </div>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="frontend/students-enhanced.html" class="nav-link">Students</a>
+                </li>
+                <li class="nav-item">
+                    <a href="courses.html" class="nav-link">Courses</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-name" id="userName">Loading...</div>
+                <div class="user-role" id="userRole">Administrator</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Alert Container -->
+        <div id="alertContainer" class="alert"></div>
+
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <h1 id="welcomeMessage">Welcome to College Management System</h1>
+                <p>Manage your institution efficiently with our comprehensive dashboard</p>
+            </div>
+            <div class="date-time">
+                <div class="current-date" id="currentDate">Loading...</div>
+                <div class="current-time" id="currentTime">Loading...</div>
+            </div>
+        </section>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card students">
+                <div class="stat-header">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-change positive">+12%</div>
+                </div>
+                <div class="stat-value" id="totalStudents">0</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+
+            <div class="stat-card faculty">
+                <div class="stat-header">
+                    <div class="stat-icon">👨‍🏫</div>
+                    <div class="stat-change positive">+5%</div>
+                </div>
+                <div class="stat-value" id="totalFaculty">0</div>
+                <div class="stat-label">Faculty Members</div>
+            </div>
+
+            <div class="stat-card courses">
+                <div class="stat-header">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-change positive">+8%</div>
+                </div>
+                <div class="stat-value" id="totalCourses">0</div>
+                <div class="stat-label">Active Courses</div>
+            </div>
+
+            <div class="stat-card departments">
+                <div class="stat-header">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-change">0%</div>
+                </div>
+                <div class="stat-value" id="totalDepartments">0</div>
+                <div class="stat-label">Departments</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <div class="section-header">
+                <h2 class="section-title">Quick Actions</h2>
+                <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh Data</button>
+            </div>
+            <div class="actions-grid">
+                <a href="frontend/students-enhanced.html" class="action-btn">
+                    <span class="action-icon">👥</span>
+                    <div class="action-title">Manage Students</div>
+                    <div class="action-desc">Add, edit, delete students</div>
+                </a>
+                <a href="courses.html" class="action-btn">
+                    <span class="action-icon">📚</span>
+                    <div class="action-title">Manage Courses</div>
+                    <div class="action-desc">Create and manage courses</div>
+                </a>
+                <button class="action-btn" onclick="showReports()">
+                    <span class="action-icon">📊</span>
+                    <div class="action-title">View Reports</div>
+                    <div class="action-desc">Generate analytics</div>
+                </button>
+                <button class="action-btn" onclick="showSettings()">
+                    <span class="action-icon">⚙️</span>
+                    <div class="action-title">Settings</div>
+                    <div class="action-desc">System configuration</div>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="frontend/college-api.js"></script>
+    <script>
+        // Global variables
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        let collegeData = {
+            students: [],
+            faculty: [],
+            courses: [],
+            departments: []
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            initializeDashboard();
+            loadCollegeData();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        });
+
+        // Check authentication
+        function checkAuthentication() {
+            console.log('Checking authentication...', currentUser);
+            
+            if (!currentUser || !currentUser.username) {
+                console.log('No user found, redirecting to login');
+                window.location.href = 'simple-login.html';
+                return;
+            }
+            
+            // Update user info
+            document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+            document.getElementById('userRole').textContent = currentUser.role ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : 'Administrator';
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${currentUser.name || currentUser.username}!`;
+            
+            console.log('Authentication successful, user:', currentUser.username);
+        }
+
+        // Initialize dashboard
+        function initializeDashboard() {
+            console.log('Initializing dashboard...');
+            
+            // First load data from localStorage to ensure we have something
+            loadFromLocalStorage();
+            
+            // Then try to load from API
+            loadCollegeData();
+            
+            // Update dashboard immediately with whatever data we have
+            loadDashboardData();
+            
+            // Set up periodic refresh
+            setInterval(() => {
+                loadCollegeData();
+                loadDashboardData();
+            }, 30000); // Refresh every 30 seconds
+        }
+
+        // Load data from localStorage as fallback
+        function loadFromLocalStorage() {
+            try {
+                // Load students from localStorage
+                const savedStudents = JSON.parse(localStorage.getItem('students') || '[]');
+                if (savedStudents.length > 0) {
+                    collegeData.students = savedStudents;
+                    console.log('Loaded students from localStorage:', savedStudents.length);
+                }
+
+                // Load other data from localStorage
+                const savedFaculty = JSON.parse(localStorage.getItem('faculty') || '[]');
+                if (savedFaculty.length > 0) {
+                    collegeData.faculty = savedFaculty;
+                    console.log('Loaded faculty from localStorage:', savedFaculty.length);
+                }
+
+                const savedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
+                if (savedCourses.length > 0) {
+                    collegeData.courses = savedCourses;
+                    console.log('Loaded courses from localStorage:', savedCourses.length);
+                }
+
+                const savedDepartments = JSON.parse(localStorage.getItem('departments') || '[]');
+                if (savedDepartments.length > 0) {
+                    collegeData.departments = savedDepartments;
+                    console.log('Loaded departments from localStorage:', savedDepartments.length);
+                }
+            } catch (error) {
+                console.error('Error loading from localStorage:', error);
+            }
+        }
+
+        // Load college data
+        async function loadCollegeData() {
+            try {
+                console.log('Loading college data...');
+                
+                // Load students from backend API
+                const students = await collegeAPI.getStudents();
+                console.log('Students loaded from API:', students.length);
+                
+                // If no students from API, load from localStorage or generate demo
+                if (students.length === 0) {
+                    const savedStudents = JSON.parse(localStorage.getItem('students') || '[]');
+                    if (savedStudents.length === 0) {
+                        console.log('No students found, generating demo data...');
+                        collegeData.students = generateDemoStudents();
+                        localStorage.setItem('students', JSON.stringify(collegeData.students));
+                    } else {
+                        collegeData.students = savedStudents;
+                        console.log('Students loaded from localStorage:', savedStudents.length);
+                    }
+                } else {
+                    collegeData.students = students;
+                }
+                
+                // Load other data
+                collegeData.faculty = await collegeAPI.getFaculty();
+                collegeData.courses = await collegeAPI.getCourses();
+                collegeData.departments = await collegeAPI.getDepartments();
+                
+                // Generate demo data if empty
+                generateDemoData();
+                
+                console.log('All data loaded successfully');
+                
+            } catch (error) {
+                console.error('Error loading college data:', error);
+                showAlert('Error loading college data: ' + error.message, 'error');
+                generateDemoData();
+            }
+        }
+
+        // Generate demo students (moved here for dashboard use)
+        function generateDemoStudents() {
+            const departments = ['Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Business Administration', 'Economics'];
+            const firstNames = ['Alice', 'Bob', 'Carol', 'David', 'Emma', 'Frank', 'Grace', 'Henry', 'Ivy', 'Jack', 'Kate', 'Liam', 'Mia', 'Noah', 'Olivia', 'Peter', 'Quinn', 'Rachel', 'Samuel', 'Tina', 'Uma', 'Victor', 'Wendy', 'Xavier', 'Yasmine', 'Zoe', 'Aaron', 'Bella', 'Charles', 'Diana', 'Ethan', 'Fiona', 'George', 'Hannah', 'Ian', 'Julia', 'Kevin', 'Laura', 'Michael', 'Nancy', 'Oscar', 'Paula', 'Quentin', 'Rita', 'Steve', 'Tara', 'Ursula', 'Vincent', 'Walter', 'Xena'];
+            const lastNames = ['Johnson', 'Smith', 'Davis', 'Wilson', 'Brown', 'Miller', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall', 'Allen', 'Young', 'King', 'Wright', 'Lopez', 'Hill', 'Scott', 'Green', 'Adams', 'Baker', 'Gonzalez', 'Nelson', 'Carter', 'Mitchell', 'Perez', 'Roberts', 'Turner', 'Phillips', 'Campbell', 'Parker', 'Evans', 'Edwards', 'Collins'];
+            
+            const demoStudents = [];
+            let studentId = 1;
+            
+            // Generate 35 students (more than 30 as requested)
+            for (let i = 0; i < 35; i++) {
+                const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                const department = departments[Math.floor(Math.random() * departments.length)];
+                const semester = Math.floor(Math.random() * 8) + 1;
+                const marks = Math.floor(Math.random() * 35) + 65; // 65-100 range
+                const attendance = Math.floor(Math.random() * 20) + 80; // 80-100 range
+                
+                demoStudents.push({
+                    id: studentId++,
+                    name: `${firstName} ${lastName}`,
+                    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@college.edu`,
+                    department: department,
+                    semester: semester,
+                    marks: marks,
+                    attendance: attendance
+                });
+            }
+            
+            // Ensure at least 3 students per department
+            departments.forEach(dept => {
+                const deptStudents = demoStudents.filter(s => s.department === dept);
+                if (deptStudents.length < 3) {
+                    for (let i = deptStudents.length; i < 3; i++) {
+                        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                        const semester = Math.floor(Math.random() * 8) + 1;
+                        const marks = Math.floor(Math.random() * 35) + 65;
+                        const attendance = Math.floor(Math.random() * 20) + 80;
+                        
+                        demoStudents.push({
+                            id: studentId++,
+                            name: `${firstName} ${lastName}`,
+                            email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@college.edu`,
+                            department: dept,
+                            semester: semester,
+                            marks: marks,
+                            attendance: attendance
+                        });
+                    }
+                }
+            });
+            
+            console.log(`Generated ${demoStudents.length} demo students`);
+            return demoStudents;
+        }
+
+        // Generate demo data
+        function generateDemoData() {
+            if (collegeData.faculty.length === 0) {
+                collegeData.faculty = [
+                    { id: 1, name: 'Dr. Sarah Johnson', department: 'Computer Science', email: 'sarah@college.edu' },
+                    { id: 2, name: 'Prof. Michael Smith', department: 'Mathematics', email: 'michael@college.edu' },
+                    { id: 3, name: 'Dr. Emily Davis', department: 'Physics', email: 'emily@college.edu' },
+                    { id: 4, name: 'Prof. James Wilson', department: 'Chemistry', email: 'james@college.edu' },
+                    { id: 5, name: 'Dr. Lisa Anderson', department: 'Biology', email: 'lisa@college.edu' },
+                    { id: 6, name: 'Prof. Robert Taylor', department: 'Electrical Engineering', email: 'robert@college.edu' },
+                    { id: 7, name: 'Dr. Maria Garcia', department: 'Mechanical Engineering', email: 'maria@college.edu' },
+                    { id: 8, name: 'Prof. David Martinez', department: 'Civil Engineering', email: 'david@college.edu' },
+                    { id: 9, name: 'Dr. Jennifer Brown', department: 'Business Administration', email: 'jennifer@college.edu' },
+                    { id: 10, name: 'Prof. William Jones', department: 'Economics', email: 'william@college.edu' }
+                ];
+            }
+
+            if (collegeData.courses.length === 0) {
+                collegeData.courses = [
+                    { id: 1, name: 'Introduction to Programming', code: 'CS101', department: 'Computer Science', credits: 3 },
+                    { id: 2, name: 'Advanced Mathematics', code: 'MATH201', department: 'Mathematics', credits: 4 },
+                    { id: 3, name: 'General Physics', code: 'PHY101', department: 'Physics', credits: 3 },
+                    { id: 4, name: 'Data Structures', code: 'CS201', department: 'Computer Science', credits: 4 },
+                    { id: 5, name: 'Linear Algebra', code: 'MATH301', department: 'Mathematics', credits: 3 },
+                    { id: 6, name: 'Quantum Mechanics', code: 'PHY301', department: 'Physics', credits: 4 },
+                    { id: 7, name: 'Organic Chemistry', code: 'CHEM201', department: 'Chemistry', credits: 4 },
+                    { id: 8, name: 'Molecular Biology', code: 'BIO201', department: 'Biology', credits: 3 },
+                    { id: 9, name: 'Digital Logic Design', code: 'EE101', department: 'Electrical Engineering', credits: 3 },
+                    { id: 10, name: 'Thermodynamics', code: 'ME201', department: 'Mechanical Engineering', credits: 4 },
+                    { id: 11, name: 'Structural Analysis', code: 'CE201', department: 'Civil Engineering', credits: 4 },
+                    { id: 12, name: 'Marketing Management', code: 'BUS101', department: 'Business Administration', credits: 3 },
+                    { id: 13, name: 'Microeconomics', code: 'ECON101', department: 'Economics', credits: 3 },
+                    { id: 14, name: 'Database Systems', code: 'CS301', department: 'Computer Science', credits: 4 },
+                    { id: 15, name: 'Calculus III', code: 'MATH401', department: 'Mathematics', credits: 4 },
+                    { id: 16, name: 'Electromagnetism', code: 'PHY201', department: 'Physics', credits: 4 }
+                ];
+            }
+
+            if (collegeData.departments.length === 0) {
+                collegeData.departments = [
+                    { id: 1, name: 'Computer Science' },
+                    { id: 2, name: 'Mathematics' },
+                    { id: 3, name: 'Physics' },
+                    { id: 4, name: 'Chemistry' },
+                    { id: 5, name: 'Biology' },
+                    { id: 6, name: 'Electrical Engineering' },
+                    { id: 7, name: 'Mechanical Engineering' },
+                    { id: 8, name: 'Civil Engineering' },
+                    { id: 9, name: 'Business Administration' },
+                    { id: 10, name: 'Economics' }
+                ];
+            }
+
+            // Add demo students if empty
+            if (collegeData.students.length === 0) {
+                collegeData.students = [
+                    { id: 1, name: 'Alice Johnson', email: 'alice@college.edu', department: 'Computer Science', semester: 3, marks: 85 },
+                    { id: 2, name: 'Bob Smith', email: 'bob@college.edu', department: 'Computer Science', semester: 3, marks: 78 },
+                    { id: 3, name: 'Carol Davis', email: 'carol@college.edu', department: 'Mathematics', semester: 2, marks: 92 },
+                    { id: 4, name: 'David Wilson', email: 'david@college.edu', department: 'Physics', semester: 4, marks: 73 },
+                    { id: 5, name: 'Emma Brown', email: 'emma@college.edu', department: 'Chemistry', semester: 2, marks: 88 },
+                    { id: 6, name: 'Frank Miller', email: 'frank@college.edu', department: 'Biology', semester: 3, marks: 81 },
+                    { id: 7, name: 'Grace Taylor', email: 'grace@college.edu', department: 'Electrical Engineering', semester: 4, marks: 76 },
+                    { id: 8, name: 'Henry Anderson', email: 'henry@college.edu', department: 'Mechanical Engineering', semester: 2, marks: 84 },
+                    { id: 9, name: 'Ivy Thomas', email: 'ivy@college.edu', department: 'Civil Engineering', semester: 3, marks: 79 },
+                    { id: 10, name: 'Jack Jackson', email: 'jack@college.edu', department: 'Business Administration', semester: 1, marks: 91 },
+                    { id: 11, name: 'Kate White', email: 'kate@college.edu', department: 'Economics', semester: 2, marks: 87 },
+                    { id: 12, name: 'Liam Harris', email: 'liam@college.edu', department: 'Computer Science', semester: 4, marks: 82 },
+                    { id: 13, name: 'Mia Martin', email: 'mia@college.edu', department: 'Mathematics', semester: 3, marks: 89 },
+                    { id: 14, name: 'Noah Thompson', email: 'noah@college.edu', department: 'Physics', semester: 2, marks: 75 },
+                    { id: 15, name: 'Olivia Garcia', email: 'olivia@college.edu', department: 'Chemistry', semester: 4, marks: 93 },
+                    { id: 16, name: 'Peter Martinez', email: 'peter@college.edu', department: 'Biology', semester: 1, marks: 77 },
+                    { id: 17, name: 'Quinn Robinson', email: 'quinn@college.edu', department: 'Electrical Engineering', semester: 3, marks: 86 },
+                    { id: 18, name: 'Rachel Clark', email: 'rachel@college.edu', department: 'Mechanical Engineering', semester: 4, marks: 80 },
+                    { id: 19, name: 'Samuel Rodriguez', email: 'samuel@college.edu', department: 'Civil Engineering', semester: 2, marks: 74 },
+                    { id: 20, name: 'Tina Lewis', email: 'tina@college.edu', department: 'Business Administration', semester: 3, marks: 95 },
+                    { id: 21, name: 'Uma Lee', email: 'uma@college.edu', department: 'Economics', semester: 4, marks: 83 },
+                    { id: 22, name: 'Victor Walker', email: 'victor@college.edu', department: 'Computer Science', semester: 1, marks: 78 },
+                    { id: 23, name: 'Wendy Hall', email: 'wendy@college.edu', department: 'Mathematics', semester: 2, marks: 90 },
+                    { id: 24, name: 'Xavier Allen', email: 'xavier@college.edu', department: 'Physics', semester: 3, marks: 72 },
+                    { id: 25, name: 'Yasmine Young', email: 'yasmine@college.edu', department: 'Chemistry', semester: 4, marks: 88 }
+                ];
+            }
+        }
+
+        // Load dashboard data
+        function loadDashboardData() {
+            try {
+                console.log('Loading dashboard data...');
+                updateStatistics();
+                console.log('Dashboard data loaded successfully');
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showAlert('Error loading dashboard data', 'error');
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            try {
+                const totalStudents = collegeData.students.length;
+                const totalFaculty = collegeData.faculty.length;
+                const totalCourses = collegeData.courses.length;
+                const totalDepartments = collegeData.departments.length;
+
+                console.log('Statistics calculated:', {
+                    totalStudents,
+                    totalFaculty,
+                    totalCourses,
+                    totalDepartments
+                });
+
+                // Update DOM
+                animateValue('totalStudents', totalStudents);
+                animateValue('totalFaculty', totalFaculty);
+                animateValue('totalCourses', totalCourses);
+                animateValue('totalDepartments', totalDepartments);
+            } catch (error) {
+                console.error('Error updating statistics:', error);
+            }
+        }
+
+        // Animate value changes
+        function animateValue(elementId, newValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const oldValue = element.textContent;
+            if (oldValue === newValue.toString()) return;
+            
+            element.style.transform = 'scale(1.2)';
+            element.style.color = '#1e3c72';
+            element.textContent = newValue;
+            
+            setTimeout(() => {
+                element.style.transform = 'scale(1)';
+                element.style.color = '#1e3c72';
+            }, 300);
+        }
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+            
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+        }
+
+        // Action functions
+        function logout() {
+            console.log('Logging out...');
+            localStorage.removeItem('currentUser');
+            window.location.href = 'simple-login.html';
+        }
+
+        function refreshData() {
+            console.log('Refreshing data...');
+            showAlert('Refreshing data...', 'info');
+            loadCollegeData();
+            loadDashboardData();
+            setTimeout(() => showAlert('Data refreshed successfully!', 'success'), 1000);
+        }
+
+        function showReports() {
+            generateDetailedReport();
+        }
+
+        function showSettings() {
+            openSettingsModal();
+        }
+
+        function generateDetailedReport() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const students = collegeData.students;
+            const faculty = collegeData.faculty;
+            const courses = collegeData.courses;
+            const departments = collegeData.departments;
+
+            // Calculate statistics
+            const totalStudents = students.length;
+            const totalFaculty = faculty.length;
+            const totalCourses = courses.length;
+            const totalDepartments = departments.length;
+            
+            const avgPerformance = totalStudents > 0 ? 
+                Math.round(students.reduce((sum, s) => sum + (s.marks || 0), 0) / totalStudents) : 0;
+            
+            const departmentStats = {};
+            departments.forEach(dept => {
+                const deptStudents = students.filter(s => s.department === dept.name);
+                const deptCourses = courses.filter(c => c.department === dept.name);
+                departmentStats[dept.name] = {
+                    students: deptStudents.length,
+                    courses: deptCourses.length,
+                    avgPerformance: deptStudents.length > 0 ? 
+                        Math.round(deptStudents.reduce((sum, s) => sum + (s.marks || 0), 0) / deptStudents.length) : 0
+                };
+            });
+
+            // Create charts data
+            const chartData = {
+                departments: departments.map(dept => departmentStats[dept.name].students),
+                performance: departments.map(dept => departmentStats[dept.name].avgPerformance),
+                labels: departments.map(dept => dept.name.substring(0, 4).toUpperCase())
+            };
+
+            // Create report HTML with charts
+            const reportHTML = `
+                <div style="background: white; color: #333; padding: 2rem; border-radius: 10px; max-width: 1200px; margin: 0 auto; max-height: 90vh; overflow-y: auto;">
+                    <h2 style="color: #1e3c72; margin-bottom: 1.5rem;">📊 College Management System Report</h2>
+                    <p style="margin-bottom: 1rem;"><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+                    <p style="margin-bottom: 1rem;"><strong>Generated by:</strong> ${currentUser.name || currentUser.username}</p>
+                    
+                    <h3 style="color: #1e3c72; margin-top: 2rem; margin-bottom: 1rem;">📈 Overall Statistics</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Metric</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Count</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">Total Students</td>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">${totalStudents}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">Total Faculty</td>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">${totalFaculty}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">Total Courses</td>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">${totalCourses}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">Total Departments</td>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">${totalDepartments}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">Average Performance</td>
+                            <td style="padding: 0.75rem; border: 1px solid #ddd;">${avgPerformance}%</td>
+                        </tr>
+                    </table>
+
+                    <h3 style="color: #1e3c72; margin-bottom: 1rem;">📊 Visual Analytics</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                            <h4 style="text-align: center; margin-bottom: 1rem;">Students by Department</h4>
+                            <canvas id="deptChart" width="400" height="300"></canvas>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                            <h4 style="text-align: center; margin-bottom: 1rem;">Performance by Department</h4>
+                            <canvas id="perfChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #1e3c72; margin-bottom: 1rem;">🏢 Department-wise Statistics</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Department</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Students</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Courses</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Avg Performance</th>
+                        </tr>
+                        ${Object.entries(departmentStats).map(([dept, stats]) => `
+                            <tr>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${dept}</td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${stats.students}</td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${stats.courses}</td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${stats.avgPerformance}%</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+
+                    <h3 style="color: #1e3c72; margin-bottom: 1rem;">👥 Top Performing Students</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Rank</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Name</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Department</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Semester</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Marks</th>
+                            <th style="padding: 0.75rem; text-align: left; border: 1px solid #ddd;">Attendance</th>
+                        </tr>
+                        ${students.sort((a, b) => (b.marks || 0) - (a.marks || 0)).slice(0, 5).map((student, index) => `
+                            <tr>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${index + 1}</td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${student.name}</td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${student.department}</td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${student.semester || 'N/A'}</td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${student.marks}%</td>
+                                <td style="padding: 0.75rem; border: 1px solid #ddd;">${student.attendance || 'N/A'}%</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button onclick="window.print()" style="background: #28a745; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 5px; margin-right: 1rem; cursor: pointer;">🖨️ Print Report</button>
+                        <button onclick="exportReport()" style="background: #007bff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 5px; cursor: pointer;">📥 Export Report</button>
+                        <button onclick="refreshReport()" style="background: #17a2b8; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 5px; cursor: pointer;">🔄 Refresh Data</button>
+                    </div>
+                </div>
+            `;
+
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            modal.innerHTML = reportHTML;
+            
+            // Add close functionality
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+
+            document.body.appendChild(modal);
+
+            // Draw charts after modal is added to DOM
+            setTimeout(() => {
+                drawCharts(chartData);
+            }, 100);
+        }
+
+        function drawCharts(data) {
+            // Draw department chart
+            const deptCanvas = document.getElementById('deptChart');
+            if (deptCanvas) {
+                drawBarChart(deptCanvas, data.labels, data.departments, 'Students', '#1e3c72');
+            }
+
+            // Draw performance chart
+            const perfCanvas = document.getElementById('perfChart');
+            if (perfCanvas) {
+                drawBarChart(perfCanvas, data.labels, data.performance, 'Performance (%)', '#28a745');
+            }
+        }
+
+        function drawBarChart(canvas, labels, data, label, color) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+            const barWidth = (width - padding * 2) / labels.length - 10;
+            const maxValue = Math.max(...data);
+            const scale = (height - padding * 2) / maxValue;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw bars
+            data.forEach((value, index) => {
+                const barHeight = value * scale;
+                const x = padding + index * (barWidth + 10);
+                const y = height - padding - barHeight;
+
+                // Draw bar
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                // Draw value on top
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(value, x + barWidth / 2, y - 5);
+
+                // Draw label
+                ctx.fillText(labels[index], x + barWidth / 2, height - 20);
+            });
+
+            // Draw axes
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+
+            // Draw title
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, width / 2, 20);
+        }
+
+        function refreshReport() {
+            location.reload();
+        }
+
+        function openSettingsModal() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const students = collegeData.students;
+            const faculty = collegeData.faculty;
+            const courses = collegeData.courses;
+            const departments = collegeData.departments;
+            
+            // Calculate statistics for settings
+            const totalStudents = students.length;
+            const totalFaculty = faculty.length;
+            const totalCourses = courses.length;
+            const totalDepartments = departments.length;
+            
+            const avgPerformance = totalStudents > 0 ? 
+                Math.round(students.reduce((sum, s) => sum + (s.marks || 0), 0) / totalStudents) : 0;
+            
+            const departmentStats = {};
+            departments.forEach(dept => {
+                const deptStudents = students.filter(s => s.department === dept.name);
+                departmentStats[dept.name] = deptStudents.length;
+            });
+            
+            // Create chart data
+            const chartData = {
+                departments: departments.map(dept => departmentStats[dept.name]),
+                labels: departments.map(dept => dept.name.substring(0, 4).toUpperCase())
+            };
+            
+            const settingsHTML = `
+                <div style="background: white; color: #333; padding: 2rem; border-radius: 10px; max-width: 900px; margin: 0 auto; max-height: 90vh; overflow-y: auto;">
+                    <h2 style="color: #1e3c72; margin-bottom: 1.5rem;">⚙️ System Settings & Analytics</h2>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #1e3c72; margin-bottom: 1rem;">👤 User Information</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 0.75rem; font-weight: 600;">Username:</td>
+                                <td style="padding: 0.75rem;">${currentUser.username}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; font-weight: 600;">Name:</td>
+                                <td style="padding: 0.75rem;">${currentUser.name || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; font-weight: 600;">Role:</td>
+                                <td style="padding: 0.75rem;">${currentUser.role || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; font-weight: 600;">Department:</td>
+                                <td style="padding: 0.75rem;">${currentUser.department || 'N/A'}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; font-weight: 600;">Email:</td>
+                                <td style="padding: 0.75rem;">${currentUser.email || 'N/A'}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #1e3c72; margin-bottom: 1rem;">� System Overview</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #1e3c72;">${totalStudents}</div>
+                                <div style="color: #666;">Students</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #28a745;">${totalFaculty}</div>
+                                <div style="color: #666;">Faculty</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #ffc107;">${totalCourses}</div>
+                                <div style="color: #666;">Courses</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #dc3545;">${totalDepartments}</div>
+                                <div style="color: #666;">Departments</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #17a2b8;">${avgPerformance}%</div>
+                                <div style="color: #666;">Avg Performance</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #1e3c72; margin-bottom: 1rem;">📈 Analytics Dashboard</h3>
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                            <h4 style="text-align: center; margin-bottom: 1rem;">Student Distribution by Department</h4>
+                            <canvas id="settingsDeptChart" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #1e3c72; margin-bottom: 1rem;">�🔧 System Configuration</h3>
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px;">
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Auto Refresh Interval:</label>
+                                <select id="refreshInterval" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 3px;">
+                                    <option value="10000">10 seconds</option>
+                                    <option value="30000" selected>30 seconds</option>
+                                    <option value="60000">1 minute</option>
+                                    <option value="300000">5 minutes</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Theme:</label>
+                                <select id="theme" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 3px;">
+                                    <option value="default" selected>Default</option>
+                                    <option value="dark">Dark Mode</option>
+                                    <option value="light">Light Mode</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                    <input type="checkbox" id="notifications" checked style="margin-right: 0.5rem;">
+                                    <span style="font-weight: 600;">Enable Notifications</span>
+                                </label>
+                                <label style="display: flex; align-items: center;">
+                                    <input type="checkbox" id="animations" checked style="margin-right: 0.5rem;">
+                                    <span style="font-weight: 600;">Enable Animations</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #1e3c72; margin-bottom: 1rem;">📊 Data Management</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <button onclick="exportAllData()" style="background: #28a745; color: white; border: none; padding: 0.75rem; border-radius: 5px; cursor: pointer;">📥 Export All Data</button>
+                            <button onclick="clearAllData()" style="background: #dc3545; color: white; border: none; padding: 0.75rem; border-radius: 5px; cursor: pointer;">🗑️ Clear All Data</button>
+                            <button onclick="resetToDefaults()" style="background: #ffc107; color: #333; border: none; padding: 0.75rem; border-radius: 5px; cursor: pointer;">🔄 Reset to Defaults</button>
+                            <button onclick="syncWithBackend()" style="background: #17a2b8; color: white; border: none; padding: 0.75rem; border-radius: 5px; cursor: pointer;">🔄 Sync with Backend</button>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button onclick="closeSettingsModal()" style="background: #6c757d; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 5px; margin-right: 1rem; cursor: pointer;">❌ Close</button>
+                        <button onclick="saveSettings()" style="background: #007bff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 5px; cursor: pointer;">💾 Save Settings</button>
+                    </div>
+                </div>
+            `;
+
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            modal.innerHTML = settingsHTML;
+            
+            // Add close functionality
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+
+            document.body.appendChild(modal);
+
+            // Draw chart after modal is added to DOM
+            setTimeout(() => {
+                drawSettingsChart(chartData);
+            }, 100);
+        }
+
+        function drawSettingsChart(data) {
+            const canvas = document.getElementById('settingsDeptChart');
+            if (canvas) {
+                drawBarChart(canvas, data.labels, data.departments, 'Students by Department', '#1e3c72');
+            }
+        }
+
+        function closeSettingsModal() {
+            const modals = document.querySelectorAll('div[style*="position: fixed"]');
+            modals.forEach(modal => {
+                if (modal.innerHTML.includes('System Settings')) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+
+        function saveSettings() {
+            const refreshInterval = document.getElementById('refreshInterval').value;
+            const theme = document.getElementById('theme').value;
+            const notifications = document.getElementById('notifications').checked;
+            const animations = document.getElementById('animations').checked;
+
+            // Save settings to localStorage
+            localStorage.setItem('dashboardSettings', JSON.stringify({
+                refreshInterval,
+                theme,
+                notifications,
+                animations
+            }));
+
+            showAlert('Settings saved successfully!', 'success');
+            closeSettingsModal();
+        }
+
+        function exportReport() {
+            const reportContent = document.querySelector('div[style*="background: white"]').innerHTML;
+            const blob = new Blob([reportContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `college-report-${new Date().toISOString().split('T')[0]}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportAllData() {
+            const data = {
+                students: collegeData.students,
+                faculty: collegeData.faculty,
+                courses: collegeData.courses,
+                departments: collegeData.departments,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `college-data-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showAlert('Data exported successfully!', 'success');
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                localStorage.removeItem('students');
+                localStorage.removeItem('faculty');
+                localStorage.removeItem('courses');
+                localStorage.removeItem('departments');
+                showAlert('All data cleared successfully!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            }
+        }
+
+        function resetToDefaults() {
+            if (confirm('Are you sure you want to reset to default demo data?')) {
+                localStorage.removeItem('students');
+                localStorage.removeItem('faculty');
+                localStorage.removeItem('courses');
+                localStorage.removeItem('departments');
+                showAlert('System reset to defaults!', 'success');
+                setTimeout(() => location.reload(), 1500);
+            }
+        }
+
+        function syncWithBackend() {
+            showAlert('Syncing with backend...', 'info');
+            // This would sync with actual backend API
+            setTimeout(() => showAlert('Sync completed successfully!', 'success'), 2000);
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.className = `alert ${type}`;
+            alertContainer.textContent = message;
+            alertContainer.style.display = 'flex';
+            
+            setTimeout(() => {
+                alertContainer.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

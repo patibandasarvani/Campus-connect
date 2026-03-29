@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management - Campus Connect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .page-title h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border: 1px solid #f0f0f0;
+        }
+
+        .filters-section h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #333;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Table Section */
+        .table-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border: 1px solid #f0f0f0;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .table-header h3 {
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+            transition: background 0.2s ease;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .data-table tr:nth-child(even):hover {
+            background: #f0f0f0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 3% auto;
+            padding: 2.5rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-header h3 {
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+            animation: alertSlideIn 0.3s ease-out;
+        }
+
+        @keyframes alertSlideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert.info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            border-left: 4px solid #17a2b8;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .header-actions {
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .filter-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-wrapper {
+                margin: 0 -1rem;
+                padding: 0 1rem;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                padding: 1.5rem;
+                width: 95%;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .header,
+            .btn,
+            .action-buttons,
+            .filters-section {
+                display: none !important;
+            }
+            
+            .container {
+                max-width: none;
+                padding: 0;
+            }
+            
+            .table-section {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🎓 Campus Connect</div>
+        <nav class="nav-links">
+            <a href="../dashboard-fixed.html" class="nav-link">Dashboard</a>
+            <a href="students-enhanced.html" class="nav-link">Students</a>
+            <a href="../courses.html" class="nav-link">Courses</a>
+        </nav>
+        <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Alert Container -->
+        <div id="alertContainer" class="alert"></div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Student Management</h1>
+                <p>Add, manage, and track student performance with persistent data storage</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="showAddStudentModal()">
+                    <span>➕</span> Add Student
+                </button>
+                <button class="btn btn-secondary" onclick="exportData()">
+                    <span>📊</span> Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" id="totalStudents">0</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-icon">📈</div>
+                <div class="stat-number" id="avgPerformance">0%</div>
+                <div class="stat-label">Average Performance</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-number" id="topPerformer">-</div>
+                <div class="stat-label">Top Performer</div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-icon">🏢</div>
+                <div class="stat-number" id="departments">0</div>
+                <div class="stat-label">Departments</div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h3>Filters & Search</h3>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="searchInput">Search Students</label>
+                    <input type="text" id="searchInput" placeholder="Search by name, email, or department..." onkeyup="filterStudents()">
+                </div>
+                <div class="filter-group">
+                    <label for="departmentFilter">Department</label>
+                    <select id="departmentFilter" onchange="filterStudents()">
+                        <option value="">All Departments</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="performanceFilter">Performance</label>
+                    <select id="performanceFilter" onchange="filterStudents()">
+                        <option value="">All Performance</option>
+                        <option value="excellent">Excellent (90-100%)</option>
+                        <option value="good">Good (75-89%)</option>
+                        <option value="average">Average (60-74%)</option>
+                        <option value="poor">Below 60%</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3>Student Records</h3>
+                <div class="header-actions">
+                    <button class="btn btn-sm btn-secondary" onclick="refreshTable()">
+                        <span>🔄</span> Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>Marks</th>
+                            <th>Performance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem;">
+                                <div class="loading"></div>
+                                <p>Loading students...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Student Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Student</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="studentForm">
+                <input type="hidden" id="studentId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentName">Full Name *</label>
+                        <input type="text" id="studentName" required placeholder="Enter student name">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentEmail">Email *</label>
+                        <input type="email" id="studentEmail" required placeholder="Enter email address">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentDepartment">Department *</label>
+                        <select id="studentDepartment" required>
+                            <option value="">Select Department</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Civil">Civil</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentSemester">Semester</label>
+                        <select id="studentSemester">
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentMarks">Marks (0-100)</label>
+                        <input type="number" id="studentMarks" min="0" max="100" placeholder="Enter marks">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentAttendance">Attendance (%)</label>
+                        <input type="number" id="studentAttendance" min="0" max="100" placeholder="Enter attendance">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn">Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="api.js"></script>
+    <script>
+        // Initialize data
+        let students = [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            updateUserInfo();
+            loadStudents();
+        });
+
+        function checkAuth() {
+            if (!currentUser.username) {
+                window.location.href = '../simple-login.html';
+            }
+        }
+
+        function updateUserInfo() {
+            document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '../simple-login.html';
+        }
+
+        // Load students from API
+        async function loadStudents() {
+            try {
+                const tbody = document.getElementById('studentsTableBody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem;">
+                            <div class="loading"></div>
+                            <p>Loading students...</p>
+                        </td>
+                    </tr>
+                `;
+
+                students = await api.getStudents();
+                
+                // Generate demo students if none exist
+                if (students.length === 0) {
+                    console.log('No students found, generating demo data...');
+                    students = generateDemoStudents();
+                    // Save to localStorage
+                    localStorage.setItem('students', JSON.stringify(students));
+                    // Also save to backend if available
+                    try {
+                        for (const student of students) {
+                            await api.addStudent(student);
+                        }
+                    } catch (error) {
+                        console.log('Backend not available, using localStorage only');
+                    }
+                }
+                
+                displayStudents();
+                updateStats();
+            } catch (error) {
+                showAlert('Error loading students: ' + error.message, 'error');
+                // Fallback to localStorage
+                const savedStudents = JSON.parse(localStorage.getItem('students') || '[]');
+                if (savedStudents.length === 0) {
+                    students = generateDemoStudents();
+                    localStorage.setItem('students', JSON.stringify(students));
+                } else {
+                    students = savedStudents;
+                }
+                displayStudents();
+                updateStats();
+            }
+        }
+
+        // Generate demo students with at least 30 students across departments
+        function generateDemoStudents() {
+            const departments = ['Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Business Administration', 'Economics'];
+            const firstNames = ['Alice', 'Bob', 'Carol', 'David', 'Emma', 'Frank', 'Grace', 'Henry', 'Ivy', 'Jack', 'Kate', 'Liam', 'Mia', 'Noah', 'Olivia', 'Peter', 'Quinn', 'Rachel', 'Samuel', 'Tina', 'Uma', 'Victor', 'Wendy', 'Xavier', 'Yasmine', 'Zoe', 'Aaron', 'Bella', 'Charles', 'Diana', 'Ethan', 'Fiona', 'George', 'Hannah', 'Ian', 'Julia', 'Kevin', 'Laura', 'Michael', 'Nancy', 'Oscar', 'Paula', 'Quentin', 'Rita', 'Steve', 'Tara', 'Ursula', 'Vincent', 'Walter', 'Xena'];
+            const lastNames = ['Johnson', 'Smith', 'Davis', 'Wilson', 'Brown', 'Miller', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall', 'Allen', 'Young', 'King', 'Wright', 'Lopez', 'Hill', 'Scott', 'Green', 'Adams', 'Baker', 'Gonzalez', 'Nelson', 'Carter', 'Mitchell', 'Perez', 'Roberts', 'Turner', 'Phillips', 'Campbell', 'Parker', 'Evans', 'Edwards', 'Collins'];
+            
+            const demoStudents = [];
+            let studentId = 1;
+            
+            // Generate 35 students (more than 30 as requested)
+            for (let i = 0; i < 35; i++) {
+                const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                const department = departments[Math.floor(Math.random() * departments.length)];
+                const semester = Math.floor(Math.random() * 8) + 1;
+                const marks = Math.floor(Math.random() * 35) + 65; // 65-100 range
+                const attendance = Math.floor(Math.random() * 20) + 80; // 80-100 range
+                
+                demoStudents.push({
+                    id: studentId++,
+                    name: `${firstName} ${lastName}`,
+                    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@college.edu`,
+                    department: department,
+                    semester: semester,
+                    marks: marks,
+                    attendance: attendance
+                });
+            }
+            
+            // Ensure at least 3 students per department
+            departments.forEach(dept => {
+                const deptStudents = demoStudents.filter(s => s.department === dept);
+                if (deptStudents.length < 3) {
+                    for (let i = deptStudents.length; i < 3; i++) {
+                        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                        const semester = Math.floor(Math.random() * 8) + 1;
+                        const marks = Math.floor(Math.random() * 35) + 65;
+                        const attendance = Math.floor(Math.random() * 20) + 80;
+                        
+                        demoStudents.push({
+                            id: studentId++,
+                            name: `${firstName} ${lastName}`,
+                            email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@college.edu`,
+                            department: dept,
+                            semester: semester,
+                            marks: marks,
+                            attendance: attendance
+                        });
+                    }
+                }
+            });
+            
+            console.log(`Generated ${demoStudents.length} demo students`);
+            return demoStudents;
+        }
+
+        function displayStudents() {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem;">
+                            <p>No students found. Add your first student!</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                const performance = getPerformanceLevel(student.marks);
+                
+                row.innerHTML = `
+                    <td>${student.id || student.roll || 'N/A'}</td>
+                    <td>${student.name || student.fullName}</td>
+                    <td>${student.email}</td>
+                    <td>${student.department}</td>
+                    <td>${student.semester || 'N/A'}</td>
+                    <td>${student.marks || 0}%</td>
+                    <td><span class="badge ${performance.class}">${performance.label}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm" onclick="editStudent(${student.id || student.roll})">Edit</button>
+                            <button class="btn btn-sm btn-secondary" onclick="deleteStudent(${student.id || student.roll})">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getPerformanceLevel(marks) {
+            if (marks >= 90) return { label: 'Excellent', class: 'success' };
+            if (marks >= 75) return { label: 'Good', class: 'info' };
+            if (marks >= 60) return { label: 'Average', class: 'warning' };
+            return { label: 'Needs Improvement', class: 'error' };
+        }
+
+        function updateStats() {
+            const totalStudents = students.length;
+            const avgPerformance = totalStudents > 0 ? 
+                Math.round(students.reduce((sum, s) => sum + (s.marks || 0), 0) / totalStudents) : 0;
+            const topStudent = students.length > 0 ? 
+                students.reduce((top, s) => (s.marks || 0) > (top.marks || 0) ? s : top) : null;
+            const departments = [...new Set(students.map(s => s.department).filter(Boolean))].length;
+            
+            document.getElementById('totalStudents').textContent = totalStudents;
+            document.getElementById('avgPerformance').textContent = avgPerformance + '%';
+            document.getElementById('topPerformer').textContent = topStudent ? topStudent.name : '-';
+            document.getElementById('departments').textContent = departments;
+        }
+
+        function showAddStudentModal() {
+            document.getElementById('modalTitle').textContent = 'Add Student';
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentModal').style.display = 'block';
+        }
+
+        function editStudent(id) {
+            const student = students.find(s => (s.id || s.roll) == id);
+            if (student) {
+                document.getElementById('modalTitle').textContent = 'Edit Student';
+                document.getElementById('studentId').value = student.id || student.roll;
+                document.getElementById('studentName').value = student.name || student.fullName;
+                document.getElementById('studentEmail').value = student.email;
+                document.getElementById('studentDepartment').value = student.department;
+                document.getElementById('studentSemester').value = student.semester || '';
+                document.getElementById('studentMarks').value = student.marks || '';
+                document.getElementById('studentAttendance').value = student.attendance || '';
+                document.getElementById('studentModal').style.display = 'block';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('studentModal').style.display = 'none';
+        }
+
+        async function deleteStudent(id) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                try {
+                    await api.deleteStudent(id);
+                    showAlert('Student deleted successfully!', 'success');
+                    loadStudents();
+                } catch (error) {
+                    showAlert('Error deleting student: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // Form submission
+        document.getElementById('studentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const studentData = {
+                name: document.getElementById('studentName').value,
+                email: document.getElementById('studentEmail').value,
+                department: document.getElementById('studentDepartment').value,
+                semester: parseInt(document.getElementById('studentSemester').value) || null,
+                marks: parseInt(document.getElementById('studentMarks').value) || 0,
+                attendance: parseInt(document.getElementById('studentAttendance').value) || 0
+            };
+            
+            const studentId = document.getElementById('studentId').value;
+            
+            try {
+                if (studentId) {
+                    // Edit existing student
+                    await api.updateStudent(studentId, studentData);
+                    showAlert('Student updated successfully!', 'success');
+                } else {
+                    // Add new student
+                    await api.addStudent(studentData);
+                    showAlert('Student added successfully!', 'success');
+                }
+                
+                loadStudents();
+                closeModal();
+            } catch (error) {
+                showAlert('Error saving student: ' + error.message, 'error');
+            }
+        });
+
+        function filterStudents() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const department = document.getElementById('departmentFilter').value;
+            const performance = document.getElementById('performanceFilter').value;
+            
+            const filtered = students.filter(student => {
+                const matchesSearch = !search || 
+                    (student.name || student.fullName || '').toLowerCase().includes(search) || 
+                    student.email.toLowerCase().includes(search) ||
+                    (student.id || student.roll || '').toString().includes(search);
+                
+                const matchesDepartment = !department || student.department === department;
+                
+                let matchesPerformance = true;
+                if (performance === 'excellent') matchesPerformance = (student.marks || 0) >= 90;
+                else if (performance === 'good') matchesPerformance = (student.marks || 0) >= 75 && (student.marks || 0) < 90;
+                else if (performance === 'average') matchesPerformance = (student.marks || 0) >= 60 && (student.marks || 0) < 75;
+                else if (performance === 'poor') matchesPerformance = (student.marks || 0) < 60;
+                
+                return matchesSearch && matchesDepartment && matchesPerformance;
+            });
+            
+            // Display filtered results
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem;">
+                            <p>No students found matching your criteria.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filtered.forEach(student => {
+                const row = document.createElement('tr');
+                const performance = getPerformanceLevel(student.marks);
+                
+                row.innerHTML = `
+                    <td>${student.id || student.roll || 'N/A'}</td>
+                    <td>${student.name || student.fullName}</td>
+                    <td>${student.email}</td>
+                    <td>${student.department}</td>
+                    <td>${student.semester || 'N/A'}</td>
+                    <td>${student.marks || 0}%</td>
+                    <td><span class="badge ${performance.class}">${performance.label}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm" onclick="editStudent(${student.id || student.roll})">Edit</button>
+                            <button class="btn btn-sm btn-secondary" onclick="deleteStudent(${student.id || student.roll})">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function refreshTable() {
+            loadStudents();
+            showAlert('Table refreshed!', 'info');
+        }
+
+        function exportData() {
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "ID,Name,Email,Department,Semester,Marks,Attendance\n"
+                + students.map(s => `${s.id || s.roll || ''},"${s.name || s.fullName || ''}","${s.email}","${s.department}",${s.semester || ''},${s.marks || ''},${s.attendance || ''}`).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `students_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('Data exported successfully!', 'success');
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertContainer');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Add badge styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .badge {
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            .badge.success { background: #d4edda; color: #155724; }
+            .badge.info { background: #d1ecf1; color: #0c5460; }
+            .badge.warning { background: #fff3cd; color: #856404; }
+            .badge.error { background: #f8d7da; color: #721c24; }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

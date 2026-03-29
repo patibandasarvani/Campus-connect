@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - College Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h1>College Management System</h1>
+                </div>
+                <div class="header-nav" id="headerNav">
+                    <!-- Navigation will be dynamically inserted -->
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="user-profile">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h4 id="userName">Loading...</h4>
+                            <p id="userRole">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                <nav class="sidebar-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item active">
+                            <a href="dashboard.html" class="nav-link">
+                                <i class="fas fa-home"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="students.html" class="nav-link">
+                                <i class="fas fa-users"></i>
+                                <span>Students</span>
+                            </a>
+                        </li>
+                        <li class="nav-item" id="adminNav" style="display: none;">
+                            <a href="#" class="nav-link" onclick="showUserManagement()">
+                                <i class="fas fa-users-cog"></i>
+                                <span>Manage Users</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <div class="welcome-content">
+                        <h2 id="welcomeMessage">Welcome to Dashboard</h2>
+                        <p id="welcomeDescription">Manage your college operations efficiently</p>
+                        <div class="welcome-time">
+                            <i class="fas fa-clock"></i>
+                            <span id="currentTime"></span>
+                        </div>
+                    </div>
+                    <div class="welcome-actions">
+                        <button class="btn btn-primary" onclick="location.href='students.html'">
+                            <i class="fas fa-users"></i> Manage Students
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshDashboard()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics Grid -->
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be dynamically inserted -->
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-section">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons" id="quickActions">
+                        <!-- Actions will be dynamically inserted -->
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-row">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Department Distribution</h3>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="departmentChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Performance Overview</h3>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="performanceChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <div class="section-header">
+                        <h3>Recent Activity</h3>
+                        <button class="btn btn-sm btn-secondary" onclick="refreshActivity()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="activity-list" id="activityList">
+                        <!-- Activity items will be dynamically inserted -->
+                    </div>
+                </div>
+
+                <!-- Top Performers -->
+                <div class="top-performers-section">
+                    <div class="section-header">
+                        <h3>Top Performers</h3>
+                        <button class="btn btn-sm btn-info" onclick="viewAllPerformers()">
+                            <i class="fas fa-arrow-right"></i> View All
+                        </button>
+                    </div>
+                    <div class="performers-list" id="performersList">
+                        <!-- Top performers will be dynamically inserted -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Alert/Notification Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Dashboard-specific functionality
+        let dashboardData = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            updateUserInfo();
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+
+        function loadDashboardData() {
+            // Simulate loading dashboard data
+            setTimeout(() => {
+                dashboardData = {
+                    totalStudents: 156,
+                    averageMarks: 72.5,
+                    topStudent: { name: 'Alice Johnson', marks: 95 },
+                    departmentStats: {
+                        'Computer Science': 45,
+                        'Information Technology': 38,
+                        'Electronics': 32,
+                        'Electrical': 28,
+                        'Mechanical': 13
+                    },
+                    performanceDistribution: {
+                        excellent: 42,
+                        good: 68,
+                        average: 35,
+                        poor: 11
+                    }
+                };
+                
+                updateStatsCards();
+                updateQuickActions();
+                drawCharts();
+                loadRecentActivity();
+                loadTopPerformers();
+            }, 500);
+        }
+
+        function updateUserInfo() {
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.full_name || currentUser.username;
+                document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${currentUser.full_name || currentUser.username}!`;
+                
+                if (currentUser.role === 'admin') {
+                    document.getElementById('adminNav').style.display = 'block';
+                }
+            }
+        }
+
+        function getCurrentUser() {
+            return JSON.parse(localStorage.getItem('currentUser') || '{}');
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        function updateStatsCards() {
+            const statsGrid = document.getElementById('statsGrid');
+            const stats = [
+                {
+                    icon: 'fa-users',
+                    value: dashboardData.totalStudents,
+                    label: 'Total Students',
+                    color: 'primary'
+                },
+                {
+                    icon: 'fa-chart-line',
+                    value: dashboardData.averageMarks,
+                    label: 'Average Marks',
+                    color: 'success'
+                },
+                {
+                    icon: 'fa-trophy',
+                    value: dashboardData.topStudent.name,
+                    label: 'Top Performer',
+                    color: 'warning'
+                },
+                {
+                    icon: 'fa-building',
+                    value: Object.keys(dashboardData.departmentStats).length,
+                    label: 'Departments',
+                    color: 'info'
+                }
+            ];
+
+            statsGrid.innerHTML = stats.map(stat => `
+                <div class="stat-card ${stat.color}">
+                    <div class="stat-icon">
+                        <i class="fas ${stat.icon}"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>${stat.value}</h3>
+                        <p>${stat.label}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateQuickActions() {
+            const currentUser = getCurrentUser();
+            const quickActions = document.getElementById('quickActions');
+            
+            let actions = [];
+            
+            if (currentUser.role === 'admin') {
+                actions = [
+                    { icon: 'fa-user-plus', text: 'Add User', class: 'primary', action: 'showAddUserModal' },
+                    { icon: 'fa-user-plus', text: 'Add Student', class: 'success', action: 'location.href="students.html"' },
+                    { icon: 'fa-chart-bar', text: 'View Reports', class: 'warning', action: 'showReports' },
+                    { icon: 'fa-cog', text: 'Settings', class: 'info', action: 'showSettings' }
+                ];
+            } else if (currentUser.role === 'faculty' || currentUser.role === 'hod') {
+                actions = [
+                    { icon: 'fa-user-plus', text: 'Add Student', class: 'primary', action: 'location.href="students.html"' },
+                    { icon: 'fa-sync', text: 'Refresh Data', class: 'success', action: 'refreshDashboard' },
+                    { icon: 'fa-chart-bar', text: 'View Reports', class: 'warning', action: 'showReports' }
+                ];
+            } else {
+                actions = [
+                    { icon: 'fa-user', text: 'My Profile', class: 'primary', action: 'showProfile' },
+                    { icon: 'fa-chart-line', text: 'My Progress', class: 'success', action: 'showProgress' },
+                    { icon: 'fa-sync', text: 'Refresh', class: 'info', action: 'refreshDashboard' }
+                ];
+            }
+
+            quickActions.innerHTML = actions.map(action => `
+                <button class="action-btn ${action.class}" onclick="${action.action}">
+                    <i class="fas ${action.icon}"></i>
+                    <span>${action.text}</span>
+                </button>
+            `).join('');
+        }
+
+        function drawCharts() {
+            drawDepartmentChart();
+            drawPerformanceChart();
+        }
+
+        function drawDepartmentChart() {
+            const canvas = document.getElementById('departmentChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const data = dashboardData.departmentStats;
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+            
+            // Simple pie chart
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'];
+            const total = values.reduce((a, b) => a + b, 0);
+            let currentAngle = 0;
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 20;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            values.forEach((value, index) => {
+                const sliceAngle = (value / total) * 2 * Math.PI;
+                
+                // Draw slice
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.lineTo(centerX, centerY);
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fill();
+                
+                // Draw label
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
+                const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${Math.round((value / total) * 100)}%`, labelX, labelY);
+                
+                currentAngle += sliceAngle;
+            });
+            
+            // Draw legend
+            let legendY = 20;
+            labels.forEach((label, index) => {
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fillRect(10, legendY - 10, 15, 15);
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`${label}: ${values[index]}`, 30, legendY);
+                legendY += 20;
+            });
+        }
+
+        function drawPerformanceChart() {
+            const canvas = document.getElementById('performanceChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const data = dashboardData.performanceDistribution;
+            const labels = ['Excellent', 'Good', 'Average', 'Poor'];
+            const values = Object.values(data);
+            const colors = ['#28a745', '#17a2b8', '#ffc107', '#dc3545'];
+            
+            // Bar chart
+            const barWidth = canvas.width / (values.length * 2);
+            const maxValue = Math.max(...values);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            values.forEach((value, index) => {
+                const barHeight = (value / maxValue) * (canvas.height - 60);
+                const x = (index * 2 + 0.5) * barWidth;
+                const y = canvas.height - barHeight - 40;
+                
+                ctx.fillStyle = colors[index];
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                // Draw value on top
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(value, x + barWidth/2, y - 5);
+                
+                // Draw label
+                ctx.font = '12px Arial';
+                ctx.fillText(labels[index], x + barWidth/2, canvas.height - 20);
+            });
+        }
+
+        function loadRecentActivity() {
+            const activities = [
+                { icon: 'fa-user-plus', text: 'New student added: John Doe', time: '2 hours ago', color: 'success' },
+                { icon: 'fa-edit', text: 'Student record updated: Jane Smith', time: '4 hours ago', color: 'info' },
+                { icon: 'fa-trash', text: 'Student deleted: Mike Johnson', time: '6 hours ago', color: 'warning' },
+                { icon: 'fa-sign-in-alt', text: 'User login: admin', time: '8 hours ago', color: 'primary' }
+            ];
+            
+            const activityList = document.getElementById('activityList');
+            activityList.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon ${activity.color}">
+                        <i class="fas ${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <p>${activity.text}</p>
+                        <span class="activity-time">${activity.time}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadTopPerformers() {
+            const performers = [
+                { name: 'Alice Johnson', roll: 'CS2024001', marks: 95, department: 'Computer Science' },
+                { name: 'Bob Smith', roll: 'IT2024002', marks: 92, department: 'Information Technology' },
+                { name: 'Carol Davis', roll: 'EC2024003', marks: 88, department: 'Electronics' },
+                { name: 'David Wilson', roll: 'ME2024004', marks: 87, department: 'Mechanical' }
+            ];
+            
+            const performersList = document.getElementById('performersList');
+            performersList.innerHTML = performers.map((performer, index) => `
+                <div class="performer-item">
+                    <div class="performer-rank">
+                        <span class="rank-badge ${index === 0 ? 'gold' : index === 1 ? 'silver' : 'bronze'}">
+                            ${index + 1}
+                        </span>
+                    </div>
+                    <div class="performer-info">
+                        <h4>${performer.name}</h4>
+                        <p>${performer.roll} • ${performer.department}</p>
+                    </div>
+                    <div class="performer-marks">
+                        <span class="marks-value">${performer.marks}</span>
+                        <span class="marks-label">marks</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function refreshDashboard() {
+            showAlert('Refreshing dashboard...', 'info');
+            setTimeout(() => {
+                loadDashboardData();
+                showAlert('Dashboard refreshed successfully!', 'success');
+            }, 1000);
+        }
+
+        function refreshActivity() {
+            loadRecentActivity();
+            showAlert('Activity refreshed!', 'success');
+        }
+
+        function viewAllPerformers() {
+            location.href = 'students.html';
+        }
+
+        // Placeholder functions
+        function showUserManagement() {
+            showAlert('User management feature coming soon!', 'info');
+        }
+
+        function showAddUserModal() {
+            showAlert('Add user feature coming soon!', 'info');
+        }
+
+        function showReports() {
+            showAlert('Reports feature coming soon!', 'info');
+        }
+
+        function showSettings() {
+            showAlert('Settings feature coming soon!', 'info');
+        }
+
+        function showProfile() {
+            showAlert('Profile feature coming soon!', 'info');
+        }
+
+        function showProgress() {
+            showAlert('Progress tracking feature coming soon!', 'info');
+        }
+    </script>
+
+    <style>
+        /* Dashboard-specific styles */
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 80px;
+            height: calc(100vh - 80px);
+            z-index: 100;
+        }
+
+        .content-area {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .profile-info h4 {
+            margin: 0;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .profile-info p {
+            margin: 5px 0 0 0;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: #f8f9fa;
+            color: #667eea;
+        }
+
+        .nav-item.active .nav-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .welcome-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .welcome-time {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.8;
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .quick-actions-section {
+            margin-bottom: 30px;
+        }
+
+        .quick-actions-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .charts-section {
+            margin-bottom: 30px;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-header h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .activity-section,
+        .top-performers-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .activity-icon.success { background: #28a745; }
+        .activity-icon.info { background: #17a2b8; }
+        .activity-icon.warning { background: #ffc107; }
+        .activity-icon.primary { background: #667eea; }
+
+        .activity-content p {
+            margin: 0;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .activity-time {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .performer-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .rank-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .rank-badge.gold { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .rank-badge.silver { background: linear-gradient(135deg, #C0C0C0, #808080); }
+        .rank-badge.bronze { background: linear-gradient(135deg, #CD7F32, #8B4513); }
+
+        .performer-info h4 {
+            margin: 0;
+            color: #333;
+        }
+
+        .performer-info p {
+            margin: 5px 0 0 0;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .performer-marks {
+            margin-left: auto;
+            text-align: center;
+        }
+
+        .marks-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .marks-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .content-area {
+                margin-left: 0;
+            }
+            
+            .welcome-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>

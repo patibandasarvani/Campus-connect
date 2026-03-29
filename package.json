@@ -5,16 +5,11 @@
   "main": "api/index.py",
   "scripts": {
     "dev": "vercel dev",
-    "build": "vercel build",
     "deploy": "vercel --prod",
     "start": "python backend/app.py"
   },
-  "dependencies": {
-    "@vercel/node": "^2.0.0"
-  },
-  "devDependencies": {
-    "vercel": "^28.0.0"
-  },
+  "dependencies": {},
+  "devDependencies": {},
   "keywords": [
     "college",
     "management",

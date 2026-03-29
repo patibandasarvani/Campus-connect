@@ -91,9 +91,13 @@ class CampusAPI {
     async addStudent(student) {
         // Always store in localStorage first for persistence
         const students = JSON.parse(localStorage.getItem('students') || '[]');
+        
+        // Find the highest existing ID to continue the sequence
+        const maxId = students.length > 0 ? Math.max(...students.map(s => s.id || 0)) : 0;
+        
         const newStudent = {
             ...student,
-            id: Date.now(),
+            id: maxId + 1, // Continue sequential ID from existing students
             created_at: new Date().toISOString()
         };
         students.push(newStudent);
